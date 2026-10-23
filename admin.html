@@ -148,10 +148,12 @@ input[readonly]{opacity:.8}
 .tabs button{flex:1;font:inherit;font-weight:500;padding:11px 8px;border-radius:8px;border:1px solid var(--accent);background:var(--card);color:var(--accent);cursor:pointer}
 .tabs button.on{background:var(--accent);color:var(--on-accent)}
 .tabs .cnt{font-size:12px;opacity:.85}
-body[data-view=bills] .v-new,body[data-view=dash] .v-new{display:none!important}
+body:not([data-view=new]) .v-new{display:none!important}
+body:not([data-view=ord]) .v-ord{display:none!important}
 body:not([data-view=bills]) .v-bills{display:none!important}
 body:not([data-view=dash]) .v-dash{display:none!important}
 body[data-view=bills] main,body[data-view=dash] main{max-width:1180px}
+body[data-view=ord] main{max-width:900px}
 .flt{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px 18px}
 .quick{font-size:13px;margin:10px 0 4px}
 .sumline{font-size:14px;margin:10px 0;padding:10px 12px;background:var(--accent-soft);border-radius:6px}
@@ -191,7 +193,7 @@ table.bt td:first-child{white-space:nowrap}
 .attn{display:flex;justify-content:space-between;align-items:center;gap:8px;border-top:1px solid var(--line);padding:8px 0;font-size:13.5px}
 .attn button{font:inherit;font-size:12.5px;padding:4px 10px;border-radius:6px;border:1px solid var(--accent);background:var(--card);color:var(--accent);cursor:pointer;margin-left:4px}
 .attn button.pri{background:var(--accent);color:var(--on-accent)}
-.notify{position:fixed;left:50%;transform:translateX(-50%);bottom:84px;z-index:20;background:var(--accent);color:var(--on-accent);padding:12px 14px;border-radius:10px;box-shadow:0 4px 18px rgba(0,0,0,.3);max-width:min(560px,94vw);font-size:14px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.notify{position:fixed;left:50%;transform:translateX(-50%);top:12px;z-index:20;background:var(--accent);color:var(--on-accent);padding:12px 14px;border-radius:10px;box-shadow:0 4px 18px rgba(0,0,0,.3);max-width:min(560px,94vw);font-size:14px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
 .notify a,.notify button{font:inherit;font-size:13.5px;font-weight:500;padding:7px 12px;border-radius:6px;background:var(--gold);color:#222;border:0;text-decoration:none;cursor:pointer}
 .notify button.x{background:transparent;color:var(--on-accent);border:1px solid currentColor}
 .fbit{display:grid;grid-template-columns:1fr 110px;gap:4px 10px;margin-bottom:12px}.fbit .nm{grid-column:1/3;font-size:13.5px}.fbit input{grid-column:1/3}
@@ -201,6 +203,13 @@ table.bt td:first-child{white-space:nowrap}
 
 [hidden]{display:none!important}
 .btabs{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0 14px}.btabs button{font:inherit;font-size:13px;padding:7px 12px;border-radius:99px;border:1px solid var(--line);background:var(--card);color:var(--fg);cursor:pointer}.btabs button b{font-weight:500;color:var(--muted);margin-left:4px}.btabs button.on{background:var(--accent);color:var(--on-accent);border-color:var(--accent)}.btabs button.on b{color:var(--on-accent);opacity:.85}
+
+.pager{display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center;justify-content:space-between;margin-top:12px;padding-top:10px;border-top:1px solid var(--line);font-size:13px;color:var(--muted)}
+.pager .pn{display:flex;gap:6px;align-items:center}.pager .pp{color:var(--fg);padding:0 6px;white-space:nowrap}
+.pager button{font:inherit;font-size:13px;padding:5px 11px;border-radius:6px;border:1px solid var(--accent);background:var(--card);color:var(--accent);cursor:pointer}
+.pager button:disabled{opacity:.4;cursor:not-allowed}
+.pager select{width:auto;display:inline-block;padding:4px 6px;font-size:13px;border:1px solid var(--line);border-radius:6px;background:var(--card);color:var(--fg)}
+.pager .ps{display:flex;gap:6px;align-items:center}
 </style></head><body>
 <main>
   <section class="card head">
@@ -210,7 +219,7 @@ table.bt td:first-child{white-space:nowrap}
     <div class="sub">Take the order, record the advance, and send the bill. When more money comes in, add the payment and send the updated bill. The final bill goes out once everything is paid. <span class="req">*</span> needed for sending</div>
   </section>
 
-  <nav class="tabs" aria-label="Pages"><button type="button" id="tabNew" class="on">New order</button><button type="button" id="tabBills">All bills <span id="tabCount" class="cnt"></span></button><button type="button" id="tabDash">Dashboard</button></nav>
+  <nav class="tabs" aria-label="Pages"><button type="button" id="tabNew" class="on">New order</button><button type="button" id="tabOrd">Orders <span id="ordBadge" class="cnt"></span></button><button type="button" id="tabBills">All bills <span id="tabCount" class="cnt"></span></button><button type="button" id="tabDash">Dashboard</button></nav>
 
   <section class="card v-bills" id="billsPage">
     <h2>All bills</h2>
@@ -226,6 +235,7 @@ table.bt td:first-child{white-space:nowrap}
     <div class="sumline" id="bSum"></div>
     <div class="tw"><table class="bt"><thead><tr><th>Bill no.</th><th>Date</th><th>Customer</th><th>Items</th><th class="n">Total</th><th class="n">Paid</th><th class="n">Balance</th><th>Status</th><th>Actions</th></tr></thead><tbody id="bBody"></tbody></table></div>
     <div class="empty" id="bEmpty" hidden>No bills match these filters.</div>
+    <div id="bPager"></div>
     <div class="hint">Cancelling keeps the bill number and is left out of the totals. Any money already received must be refunded by you. Delete is only for cancelled bills or bills with no payment.</div>
   </section>
 
@@ -311,11 +321,12 @@ table.bt td:first-child{white-space:nowrap}
     <details id="txtWrap"><summary>Bill as text</summary><textarea id="txt" readonly></textarea></details>
   </section>
 
-  <section class="card v-new" id="ordCard">
+  <section class="card v-ord" id="ordCard">
     <div class="h2row"><h2>Orders</h2>
       <span style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><select id="ordMode" aria-label="Which orders to show"><option value="day">By day</option><option value="due">Balance due (all days)</option></select><input id="ordDate" type="date" style="width:auto" aria-label="Show orders for date"></span></div>
     <div class="sum" id="ordSum"></div>
     <div id="ordList"></div>
+    <div id="oPager"></div>
     <div class="tools">
       <button class="btn sm" type="button" id="btnCsv">Download orders (Excel / CSV)</button>
       <button class="btn sm" type="button" id="btnBackup">Download backup</button>
@@ -617,7 +628,7 @@ function revise(o,kind){
   var paid=o.payments.reduce(function(a,p){return a+p.amount},0);
   o.rev=(o.rev||1)+1; o.revisions.push({rev:o.rev,at:stamp(),kind:kind,paid:paid,balance:o.total-paid});
 }
-function persist(){if(!saveStore()){setMsg('Could not save: this browser’s storage is full or blocked.');return false}try{renderBills();renderDash()}catch(e){}return true}
+function persist(){if(!saveStore()){setMsg('Could not save: this browser’s storage is full or blocked.');return false}try{renderBills();renderDash();renderOrders()}catch(e){}return true}
 function afterSave(){baseCore=coreStr(snap());$('adv').value='';$('ref').value='';sentWa=false;update();renderOrders()}
 function saveNew(){
   var s=snap(); if(!s.count) return null;
@@ -825,9 +836,34 @@ function setStage(o,act){
   if(!persist()) return; renderOrders(); offer(o);
 }
 
+/* ---------- pagination ---------- */
+var PG={bills:{p:1,s:10,sig:''},ord:{p:1,s:10,sig:''},attn:{p:1,s:10,sig:''}};
+try{var _ps=+localStorage.getItem('mj_psize'); if([10,25,50,100].indexOf(_ps)>=0) Object.keys(PG).forEach(function(k){PG[k].s=_ps})}catch(e){}
+function pgSlice(key,list,sig){
+  var g=PG[key]; if(sig!==g.sig){g.sig=sig;g.p=1}
+  var pages=Math.max(1,Math.ceil(list.length/g.s)); if(g.p>pages) g.p=pages; if(g.p<1) g.p=1;
+  return {items:list.slice((g.p-1)*g.s,g.p*g.s),pages:pages,from:list.length?(g.p-1)*g.s+1:0,to:Math.min(list.length,g.p*g.s),total:list.length};
+}
+function pgHtml(key,r){
+  if(r.total<=10) return '';
+  var g=PG[key];
+  return '<div class="pager" data-pg="'+key+'"><span class="pi">Showing '+r.from+'–'+r.to+' of '+r.total+'</span><span class="pn"><button type="button" data-go="first"'+(g.p<=1?' disabled':'')+' aria-label="First page">«</button><button type="button" data-go="prev"'+(g.p<=1?' disabled':'')+'>Previous</button><span class="pp">Page '+g.p+' of '+r.pages+'</span><button type="button" data-go="next"'+(g.p>=r.pages?' disabled':'')+'>Next</button><button type="button" data-go="last"'+(g.p>=r.pages?' disabled':'')+' aria-label="Last page">»</button></span><label class="ps">Rows <select data-size aria-label="Rows per page">'+[10,25,50,100].map(function(n){return '<option value="'+n+'"'+(g.s===n?' selected':'')+'>'+n+'</option>'}).join('')+'</select></label></div>';
+}
+function pgRedraw(){renderOrders();renderBills();renderDash()}
+document.addEventListener('click',function(e){
+  var b=e.target.closest('.pager button[data-go]'); if(!b) return;
+  var key=b.parentNode.parentNode.getAttribute('data-pg'), g=PG[key], go=b.getAttribute('data-go');
+  if(go==='first') g.p=1; else if(go==='prev') g.p=Math.max(1,g.p-1); else if(go==='next') g.p++; else g.p=1e9;
+  pgRedraw();
+});
+document.addEventListener('change',function(e){
+  var s=e.target.closest('.pager select[data-size]'); if(!s) return; var n=+s.value;
+  Object.keys(PG).forEach(function(k){PG[k].s=n;PG[k].p=1}); try{localStorage.setItem('mj_psize',String(n))}catch(x){} pgRedraw();
+});
+
 /* ---------- all bills page ---------- */
 function canDelete(o){return !!o.cancelled||!o.payments.length}
-function showView(v){document.body.setAttribute('data-view',v);$('tabNew').classList.toggle('on',v==='new');$('tabBills').classList.toggle('on',v==='bills');$('tabDash').classList.toggle('on',v==='dash');if(v==='bills')renderBills();if(v==='dash')renderDash();window.scrollTo(0,0)}
+function showView(v){document.body.setAttribute('data-view',v);$('tabNew').classList.toggle('on',v==='new');$('tabOrd').classList.toggle('on',v==='ord');$('tabBills').classList.toggle('on',v==='bills');$('tabDash').classList.toggle('on',v==='dash');if(v==='ord')renderOrders();if(v==='bills')renderBills();if(v==='dash')renderDash();window.scrollTo(0,0)}
 function orderAction(act,id){
   var o=store[id]; if(!o) return;
   if(act==='open'||act==='pay'){showView('new');return loadOrder(id,act==='pay')}
@@ -881,10 +917,11 @@ function renderBills(){
   var all=Object.keys(store).length; $('tabCount').textContent=all?'('+all+')':'';
   if(document.body.getAttribute('data-view')!=='bills') return;
   renderTabs();
-  var rows=billRows(), h='', billed=0, coll=0, due=0, live=0;
-  rows.forEach(function(o){
+  var rows=billRows(), h='', billed=0, coll=0, due=0, live=0, pg=pgSlice('bills',rows,[$('fStatus').value,$('fFrom').value,$('fTo').value,$('fQ').value].join('|'));
+  rows.forEach(function(o,ix){
     var paid=o.payments.reduce(function(a,p){return a+p.amount},0), bal=o.total-paid, ps=pstat(o), id=esc(o.id);
     if(!o.cancelled){billed+=o.total;coll+=paid;due+=Math.max(0,bal);live++}
+    if(ix<pg.from-1||ix>=pg.to) return;
     var chip=ps==='cancelled'?'<span class="chip cx">CANCELLED</span>':ps==='paid'?'<span class="chip">PAID IN FULL</span>':ps==='part'?'<span class="chip part">PART PAID</span>':'<span class="chip due">UNPAID</span>';
     var n=o.items.reduce(function(a,i){return a+i.qty},0), first=o.items[0]?o.items[0].name+(o.items.length>1?' +'+(o.items.length-1)+' more':''):'';
     var a='<button type="button" data-act="open" data-id="'+id+'">'+(ps==='paid'||ps==='cancelled'?'View':'Open / update')+'</button>';
@@ -896,7 +933,7 @@ function renderBills(){
     if(canDelete(o)) a+='<button class="dg" type="button" data-act="del" data-id="'+id+'">Delete</button>';
     h+='<tr'+(o.cancelled?' class="cx"':'')+'><td><b>'+esc(o.billNo)+'</b><small>Rev '+(o.rev||1)+'</small></td><td>'+esc(fmtDate(o.orderedAt))+'</td><td class="nm">'+esc(o.name||'Customer')+'<small>'+esc(o.phone||'')+(o.email?' · '+esc(o.email):'')+'</small></td><td>'+n+' item'+(n===1?'':'s')+'<small>'+esc(first)+'</small></td><td class="n">'+inr(o.total)+(o.discount>0?'<small>incl. discount '+inr(o.discount)+'</small>':'')+'</td><td class="n">'+inr(paid)+'</td><td class="n">'+(o.cancelled?'&ndash;':inr(Math.max(0,bal)))+'</td><td>'+chip+'<small><span class="stg'+(o.cancelled?' bad':'')+'">'+stageLabel(o)+'</span>'+'</small>'+(o.cancelled&&o.cancelReason?'<small>'+esc(o.cancelReason)+'</small>':'')+'</td><td class="acts">'+a+'</td></tr>';
   });
-  $('bBody').innerHTML=h; $('bEmpty').hidden=rows.length>0;
+  $('bBody').innerHTML=h; $('bEmpty').hidden=rows.length>0; $('bPager').innerHTML=pgHtml('bills',pg);
   $('bSum').innerHTML=rows.length?'<b>'+rows.length+'</b> bill'+(rows.length===1?'':'s')+' shown &middot; billed <b>'+inr(billed)+'</b> &middot; collected <b>'+inr(coll)+'</b> &middot; to collect <b>'+inr(due)+'</b> <span class="sub">(cancelled bills not counted)</span>':'';
 }
 $('bBody').addEventListener('click',function(e){var b=e.target.closest('button[data-act]'); if(b) orderAction(b.getAttribute('data-act'),b.getAttribute('data-id'))});
@@ -904,7 +941,7 @@ $('bBody').addEventListener('click',function(e){var b=e.target.closest('button[d
 $('fToday').addEventListener('click',function(){$('fFrom').value=$('fTo').value=dayStr(new Date());renderBills()});
 $('fPend').addEventListener('click',function(){$('fStatus').value='pending';renderBills()});
 $('fClear').addEventListener('click',function(){$('fStatus').value='all';$('fFrom').value=$('fTo').value=$('fQ').value='';renderBills()});
-$('tabNew').addEventListener('click',function(){showView('new')}); $('tabDash').addEventListener('click',function(){showView('dash')}); $('tabBills').addEventListener('click',function(){showView('bills')});
+$('tabNew').addEventListener('click',function(){showView('new')}); $('tabOrd').addEventListener('click',function(){showView('ord')}); $('tabDash').addEventListener('click',function(){showView('dash')}); $('tabBills').addEventListener('click',function(){showView('bills')});
 
 /* ---------- dashboard ---------- */
 function bars(rows,fmt,cls){ // rows: [label,value,extra]
@@ -927,13 +964,13 @@ function renderDash(){
   function K(l,v,s){return '<div class="kpi"><span class="l">'+l+'</span><b>'+v+'</b>'+(s?'<small>'+s+'</small>':'')+'</div>'}
   $('dKpis').innerHTML=K('Orders',live.length,dead.length?dead.length+' cancelled / declined':'')+K('Sales',inr(sales),live.length?'average '+inr(Math.round(sales/live.length))+' per order':'')+K('Collected',inr(coll))+K('To collect',inr(due),live.filter(function(o){return o.total-paidOf(o)>0}).length+' bills pending')+K('Delivered',delivered,live.length?Math.round(delivered/live.length*100)+'% of orders':'')+K('Avg time to deliver',dn?Math.round(ds/dn)+' min':'-',dn?'from '+dn+' delivered':'');
   /* attention */
-  var all0=Object.keys(store).map(function(k){return store[k]}), A='<h3 class="dh">Needs your attention</h3>', n=0;
-  function row(o,txt,btns){n++;A+='<div class="attn"><span><b>'+esc(o.billNo)+'</b> &middot; '+esc(o.name||'Customer')+' &middot; '+txt+'</span><span>'+btns+'</span></div>'}
+  var all0=Object.keys(store).map(function(k){return store[k]}), A='<h3 class="dh">Needs your attention</h3>', n=0, arows=[];
+  function row(o,txt,btns){n++;arows.push('<div class="attn"><span><b>'+esc(o.billNo)+'</b> &middot; '+esc(o.name||'Customer')+' &middot; '+txt+'</span><span>'+btns+'</span></div>')}
   function bt(act,id,t,pri){return '<button type="button" data-act="'+act+'" data-id="'+esc(id)+'"'+(pri?' class="pri"':'')+'>'+t+'</button>'}
   all0.filter(function(o){return stage(o)==='new'}).forEach(function(o){row(o,'waiting to be accepted ('+mins(o.orderedAt,stamp())+' min ago)',bt('accept',o.id,'Accept',1)+bt('decline',o.id,'Decline')+bt('open',o.id,'Open'))});
   all0.filter(function(o){return stage(o)==='out'}).forEach(function(o){row(o,(o.type==='delivery'?'out for delivery':'ready')+' since '+tfmt(o.outAt),bt('done',o.id,o.type==='delivery'?'Delivered':'Handed over',1))});
   all0.filter(function(o){return !o.cancelled&&o.total-paidOf(o)>0&&(stage(o)==='delivered'||stage(o)==='out')}).forEach(function(o){row(o,'balance '+inr(o.total-paidOf(o))+' still to collect',bt('pay',o.id,'Add payment',1))});
-  $('dAttn').innerHTML=n?A:'<h3 class="dh">Needs your attention</h3><div class="empty">Nothing waiting. All caught up.</div>';
+  var apg=pgSlice('attn',arows,'a'); $('dAttn').innerHTML=n?A+apg.items.join('')+pgHtml('attn',apg):'<h3 class="dh">Needs your attention</h3><div class="empty">Nothing waiting. All caught up.</div>';
   /* sales by day */
   var days={}; live.forEach(function(o){var d=dayStr(new Date(o.orderedAt)); days[d]=(days[d]||0)+o.total});
   var keys=Object.keys(days).sort().slice(-14), mx=Math.max.apply(null,keys.map(function(k){return days[k]}))||1;
@@ -958,6 +995,7 @@ function orderView(o){
   return {o:o,paid:paid,bal:o.total-paid};
 }
 function renderOrders(){
+  var nw=0; Object.keys(store).forEach(function(k){if(stage(store[k])==='new') nw++}); $('ordBadge').textContent=nw?'('+nw+' new)':'';
   var mode=$('ordMode').value; $('ordDate').hidden=mode==='due';
   var day=$('ordDate').value||dayStr(new Date()), list=Object.keys(store).map(function(id){return orderView(store[id])});
   list=list.filter(function(v){return !v.o.cancelled||mode!=='due'}); if(mode==='due') list=list.filter(function(v){return v.bal>0}); else list=list.filter(function(v){return dayStr(new Date(v.o.orderedAt))===day});
@@ -966,7 +1004,8 @@ function renderOrders(){
   list.forEach(function(v){if(v.o.cancelled) return; sales+=v.o.total;coll+=v.paid;due+=Math.max(0,v.bal); if(v.o.deliveredAt){dn++;sm+=mins(v.o.orderedAt,v.o.deliveredAt)}});
   $('ordSum').innerHTML=n?(mode==='due'?'<b>'+n+(n===1?' order':' orders')+'</b> with balance due &middot; <b>'+inr(due)+'</b> to collect':'<b>'+n+(n===1?' order':' orders')+'</b> &middot; sales <b>'+inr(sales)+'</b> &middot; collected <b>'+inr(coll)+'</b> &middot; to collect <b>'+inr(due)+'</b>'+(dn?' &middot; average <b>'+Math.round(sm/dn)+' min</b> to deliver ('+dn+')':'')):(mode==='due'?'No pending balances.':'No saved orders for this day.');
   var h='';
-  list.forEach(function(v){
+  var pg=pgSlice('ord',list,mode+'|'+(mode==='due'?'':day));
+  pg.items.forEach(function(v){
     var o=v.o, del=o.type==='delivery', st=o.status||'new';
     var items=o.items.map(function(i){return i.qty+' x '+i.name+(i.size?' ('+i.size+')':'')}).join(', ');
     var chip='<span class="stg'+(o.cancelled?' bad':'')+'">'+stageLabel(o)+'</span> '+(o.cancelled?'<span class="chip cx">CANCELLED</span>':o.total>0&&v.bal<=0?'<span class="chip">PAID IN FULL</span>':(v.paid>0?'<span class="chip part">PAID '+inr(v.paid)+' &middot; DUE '+inr(v.bal)+'</span>':'<span class="chip due">UNPAID &middot; DUE '+inr(v.bal)+'</span>'));
@@ -987,7 +1026,7 @@ function renderOrders(){
       +(o.cancelled?'<button class="link" type="button" data-act="restore" data-id="'+id+'">Restore</button>':'<button class="link" type="button" data-act="cancel" data-id="'+id+'" style="color:var(--danger)">Cancel bill</button>')+(canDelete(o)?'<button class="link" type="button" data-act="del" data-id="'+id+'" style="color:var(--danger)">Delete</button>':'')
       +'</div></div>';
   });
-  $('ordList').innerHTML=h;
+  $('ordList').innerHTML=h; $('oPager').innerHTML=pgHtml('ord',pg);
 }
 $('ordList').addEventListener('click',function(e){
   var b=e.target.closest('button[data-act]'); if(!b) return;
