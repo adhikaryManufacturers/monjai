@@ -823,7 +823,8 @@ function placeOrder(s){
   if(Date.now()-lastOrderAt<15000){say('Please wait a few seconds before sending another order.');return}
   if(!window.MJFB){sendText(s);return}
   btn.disabled=true; btn.textContent='Placing your order...';
-  var fail=function(){btn.textContent='Place order';update();say('We could not reach our order system, so we are opening WhatsApp instead. Press Send there.');sendText(s)};
+  var wa=null; try{wa=window.open('about:blank','_blank')}catch(e){}
+  var fail=function(){btn.textContent='Place order';update();say('We could not reach our order system, so we are opening WhatsApp instead. Press Send there.');var u='https://wa.me/91'+PHONE+'?text='+encodeURIComponent(message(s)); if(wa&&!wa.closed){wa.location.href=u}else sendText(s)};
   MJFB.uid().then(function(uid){
     var id=MJFB.newId(), d={id:id,uid:uid,source:'customer',status:'new',billNo:'',rev:1,revisions:[],payments:[],orderedAt:new Date().toISOString(),
       requestedFor:s.when&&!isNaN(new Date(s.when))?new Date(s.when).toISOString():'',name:s.name,phone:s.phone,email:s.email,address:s.address,type:s.del?'delivery':'pickup',
@@ -834,7 +835,8 @@ function placeOrder(s){
     lastOrderAt=Date.now(); try{if(me) MJFB.saveProfile(me.uid,{anon:me.anon,name:s.name,email:s.email||me.email||'',phone:s.phone,address:s.address,provider:me.provider}).catch(function(){})}catch(e){}
     var url='https://wa.me/91'+PHONE+'?text='+encodeURIComponent(message(s));
     Object.keys(qty).forEach(function(k){setQty(k,0)}); btn.textContent='Place order'; update();
-    showDone('<b>Order placed!</b> Mon Jai has received your order and will confirm it shortly. Follow its progress under <b>Your orders</b> below.<br>To get a faster reply you can also <a href="'+url+'" target="_blank" rel="noopener">tell us on WhatsApp</a>.');
+    var opened=false; if(wa&&!wa.closed){try{wa.location.href=url;opened=true}catch(e){}}
+    showDone('<b>Order placed!</b> Mon Jai has received it and will confirm shortly.<br>'+(opened?'WhatsApp has opened with your order. <b>Press Send there</b> so we can reply to you faster.':'<b>One more step:</b> tap the button to send the same order on WhatsApp.')+'<br><a class="btn pri big" style="display:block;text-align:center;text-decoration:none" href="'+url+'" target="_blank" rel="noopener">Send order on WhatsApp</a><div class="hint" style="margin-top:8px">Track it any time under <button type="button" class="link" data-go="orders">My orders</button>.</div>');
     $('myOrders').hidden=!myList.length&&!isReg();
   }).catch(fail);
 }
