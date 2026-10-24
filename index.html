@@ -782,7 +782,7 @@ $('pSave').addEventListener('click',function(){
   $('pMsg').textContent='Saving...'; $('pSave').disabled=true;
   var p=Promise.resolve(); if(nm!==me.name) p=MJFB.updateName(nm);
   p.then(function(){return MJFB.saveProfile(me.uid,{anon:false,name:nm,email:me.email||'',phone:ph,address:ad,provider:me.provider})}).then(function(){
-    profile=Object.assign({},profile||{},{name:nm,phone:ph,address:ad}); $('cName').value=nm; $('cPhone').value=ph; $('cAddr').value=ad; update(); lastSig=''; renderMine(ordersRaw); $('pMsg').style.color='var(--ok)'; $('pMsg').textContent='Profile saved.';
+    profile=Object.assign({},profile||{},{name:nm,phone:ph,address:ad}); drawAcct(); $('cName').value=nm; $('cPhone').value=ph; $('cAddr').value=ad; update(); lastSig=''; renderMine(ordersRaw); $('pMsg').style.color='var(--ok)'; $('pMsg').textContent='Profile saved.';
   }).catch(function(){$('pMsg').style.color=''; $('pMsg').textContent='Could not save. Check your connection and try again.'}).then(function(){$('pSave').disabled=false});
 });
 function prefKey(){return 'mj_pref_'+(me?me.uid:'x')}
@@ -848,7 +848,7 @@ function renderMine(list){
   $('moCur').classList.toggle('on',moTab==='cur'); $('moPast').classList.toggle('on',moTab==='past');
   var spent=0, n=0; myList.forEach(function(o){if(!o.cancelled){n++; if(o.status==='done') spent+=o.total||0}});
   var since=profile&&(profile.registeredAt||profile.createdAt);
-  $('myStats').innerHTML=(isReg()?'<b>'+esc(me.name||me.email||'You')+'</b> &middot; ':'Guest &middot; ')+(since?'member since '+esc(new Date(since).toLocaleDateString('en-IN',{month:'short',year:'numeric'}))+' &middot; ':'')+'<b>'+n+'</b> order'+(n===1?'':'s')+' &middot; <b>'+inr(spent)+'</b> spent &middot; <b>'+Object.keys(myRev).length+'</b> review'+(Object.keys(myRev).length===1?'':'s');
+  $('myStats').innerHTML=(isReg()?'<b>'+esc(dispName())+'</b> &middot; ':'<b>Guest</b> &middot; ')+(since?'member since '+esc(new Date(since).toLocaleDateString('en-IN',{month:'short',year:'numeric'}))+' &middot; ':'')+'<b>'+n+'</b> order'+(n===1?'':'s')+' &middot; <b>'+inr(spent)+'</b> spent &middot; <b>'+Object.keys(myRev).length+'</b> review'+(Object.keys(myRev).length===1?'':'s');
   var src=moTab==='cur'?cur:past, pages=Math.max(1,Math.ceil(src.length/10)); if(moPage>pages) moPage=pages;
   var pg=src.slice((moPage-1)*10,moPage*10);
   $('myList').innerHTML=pg.length?pg.map(orderCard).join(''):'<div class="t2" style="padding:10px 0">'+(moTab==='cur'?'No current orders.':'No past orders yet.')+'</div>';
@@ -890,11 +890,12 @@ function firstName(n){return String(n||'Customer').trim().split(/\s+/)[0]}
 function isReg(){return me&&!me.anon}
 function setAuthMsg(t){$('aMsg').textContent=t||''}
 function authErr(e){var c=(e&&e.code)||''; return {'auth/invalid-credential':'Wrong email or password.','auth/wrong-password':'Wrong email or password.','auth/user-not-found':'No account with this email. Use Create account.','auth/email-already-in-use':'This email already has an account. Use Log in.','auth/weak-password':'Password must be at least 6 characters.','auth/invalid-email':'Enter a valid email.','auth/popup-closed-by-user':'Sign-in window was closed.','auth/popup-blocked':'Allow pop-ups for this page and try again.','auth/operation-not-allowed':'This sign-in method is not switched on yet.','auth/network-request-failed':'No internet connection.','auth/too-many-requests':'Too many tries. Wait a few minutes.'}[c]||'Something went wrong. Please try again.'}
+function dispName(){return (profile&&profile.name)||(me&&me.name)||'Customer'}
 function drawAcct(){
   try{drawSubs()}catch(e){}
-  $('acctChip').textContent=isReg()?'Hi, '+firstName(me.name||me.email):'Log in';
-  if(isReg()){$('acctTxt').innerHTML='Hi <b>'+esc(firstName(me.name||me.email))+'</b> &middot; '+esc(me.email||'');$('acctToggle').textContent='Sign out';$('authBox').hidden=true}
-  else{$('acctTxt').textContent='You can order as a guest, or log in to keep your orders and details.';$('acctToggle').textContent=$('authBox').hidden?'Log in / Create account':'Close'}
+  $('acctChip').textContent=isReg()?'Hi, '+firstName(dispName()):'Guest';
+  if(isReg()){$('acctTxt').innerHTML='Signed in as <b>'+esc(dispName())+'</b>';$('acctToggle').textContent='Sign out';$('authBox').hidden=true}
+  else{$('acctTxt').innerHTML='You are ordering as <b>Guest</b>. Log in to keep your orders and details.';$('acctToggle').textContent=$('authBox').hidden?'Log in / Create account':'Close'}
 }
 function setMode(m){amode=m;$('amLogin').classList.toggle('on',m==='login');$('amSign').classList.toggle('on',m==='sign');$('aNameF').hidden=m!=='sign';$('aPhoneF').hidden=m!=='sign';$('aHint').hidden=m!=='sign';$('aGo').textContent=m==='sign'?'Create account':'Log in';$('aPass').setAttribute('autocomplete',m==='sign'?'new-password':'current-password');setAuthMsg('')}
 $('acctToggle').addEventListener('click',function(){
@@ -916,7 +917,7 @@ function fillFromProfile(p){
   function put(id,v){if(v) $(id).value=v}
   var lastO=myList.filter(function(o){return o.phone})[0]||{};
   put('cName',p&&p.name||me.name||lastO.name); put('cPhone',p&&p.phone||lastO.phone); put('cEmail',p&&p.email||me.email); put('cAddr',p&&p.address||lastO.address);
-  applyPref(); update(); lastSig=''; renderMine(ordersRaw); if(subTab==='profile') fillProfileForm();
+  drawAcct(); applyPref(); update(); lastSig=''; renderMine(ordersRaw); if(subTab==='profile') fillProfileForm();
 }
 function onUser(u){
   var prev=me, changed=!prev||prev.uid!==u.uid, upgraded=prev&&prev.uid===u.uid&&prev.anon&&!u.anon; me=u; drawAcct();
