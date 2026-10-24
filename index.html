@@ -150,10 +150,11 @@ input[readonly]{opacity:.8}
 .tabs .cnt{font-size:12px;opacity:.85}
 body:not([data-view=new]) .v-new{display:none!important}
 body:not([data-view=ord]) .v-ord{display:none!important}
+body:not([data-view=rev]) .v-rev{display:none!important}
 body:not([data-view=bills]) .v-bills{display:none!important}
 body:not([data-view=dash]) .v-dash{display:none!important}
 body[data-view=bills] main,body[data-view=dash] main{max-width:1180px}
-body[data-view=ord] main{max-width:900px}
+body[data-view=ord] main,body[data-view=rev] main{max-width:900px}
 .flt{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px 18px}
 .quick{font-size:13px;margin:10px 0 4px}
 .sumline{font-size:14px;margin:10px 0;padding:10px 12px;background:var(--accent-soft);border-radius:6px}
@@ -222,6 +223,15 @@ body.locked main,body.locked .notify{display:none!important}
 .migrate{background:#fff4d6;color:#4a3800;font-size:14px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
 .tag.on{background:var(--accent);color:var(--on-accent)}
 
+.rv{border-top:1px solid var(--line);padding:12px 0;font-size:14px}.rv .t1{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.rv .it{color:var(--muted);font-size:13px;margin-top:2px}.rv .cm{margin:6px 0}
+.rv .rep{margin-top:8px;padding:8px 10px;border-left:3px solid var(--accent);background:var(--accent-soft);border-radius:4px;font-size:13.5px}
+.rv textarea{width:100%;border:1px solid var(--line);border-radius:6px;padding:8px;margin-top:8px;font:inherit;font-size:13.5px;background:transparent;color:var(--fg)}
+.rv .btns{display:flex;gap:8px;margin-top:6px;flex-wrap:wrap}
+.rv .btns button{font:inherit;font-size:12.5px;padding:5px 11px;border-radius:6px;border:1px solid var(--accent);background:var(--card);color:var(--accent);cursor:pointer}
+.rv .btns button.pri{background:var(--accent);color:var(--on-accent)}.rv .btns button.dg{border-color:var(--danger);color:var(--danger)}
+.act{display:grid;grid-template-columns:auto 1fr;gap:2px 10px;border-top:1px solid var(--line);padding:8px 0;font-size:13.5px}.act small{color:var(--muted);white-space:nowrap}
+
 .row-h{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px}.row-h h2{margin:0}
 .late{margin-top:12px;padding:10px 12px;border-radius:6px;background:#fff4d6;color:#5b4400;font-size:13.5px}
 .sumbox table td.n{text-align:right;white-space:nowrap}.sumbox tr.g td{font-weight:700;font-size:16px;border-top:1px solid var(--line)}
@@ -229,6 +239,11 @@ body.locked main,body.locked .notify{display:none!important}
 .msg2{color:var(--danger);font-size:13.5px;min-height:1.2em;margin-top:8px}.alt{margin-top:6px;font-size:13px;text-align:center}
 .stars{color:#c98a00}.st{background:none;border:0;font-size:30px;line-height:1;cursor:pointer;color:#c98a00;padding:2px 4px}.fbit{display:grid;grid-template-columns:1fr auto;gap:4px 10px;margin:12px 0;align-items:center}.fbit .nm{font-size:14px}.fbit input{grid-column:1/3}.fbit .st{font-size:22px}
 [hidden]{display:none!important}
+.acctbar{display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap;font-size:14px}
+.tabs2{display:flex;gap:6px;margin:12px 0}.tabs2 button{flex:1;font:inherit;padding:8px;border:1px solid var(--line);background:transparent;color:var(--fg);border-radius:6px;cursor:pointer}.tabs2 button.on{background:var(--accent);color:var(--on-accent);border-color:var(--accent)}
+#authBox .btn{width:100%;margin-top:8px}.rate{border-top:1px dashed var(--line);margin-top:8px;padding-top:8px}.rate textarea,.rate input[type=text]{width:100%;border:1px solid var(--line);border-radius:6px;padding:8px;font:inherit;font-size:14px;background:transparent;color:var(--fg);margin-top:4px}
+.rate .row2{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:8px;font-size:14px}.rate .sb{font-size:26px;background:none;border:0;cursor:pointer;color:#c98a00;padding:0 2px;line-height:1}
+.reply{margin-top:6px;padding:8px 10px;border-left:3px solid var(--accent);background:var(--accent-soft);border-radius:4px;font-size:13.5px}.pr{border-top:1px solid var(--line);padding:10px 0;font-size:14px}.pr small{color:var(--muted)}
 .mo{border-top:1px solid var(--line);padding:10px 0;font-size:14px}.mo .t1{display:flex;justify-content:space-between;gap:8px}.mo .t2{color:var(--muted);font-size:13px;margin:2px 0 6px}.st{display:inline-block;font-size:12px;font-weight:700;padding:3px 10px;border-radius:99px;background:var(--accent-soft);color:var(--accent)}.st.wait{background:#fff4d6;color:#6b4f00}.st.bad{background:transparent;border:1px solid var(--danger);color:var(--danger)}
 .done{margin-top:14px;padding:12px;border-radius:6px;background:var(--accent-soft);font-size:14px}
 </style></head><body>
@@ -239,6 +254,20 @@ body.locked main,body.locked .notify{display:none!important}
     <h1>Order from Mon Jai</h1>
     <div class="sub">Choose your items, add your details and place the order. We will confirm it and send your bill on WhatsApp. Please order before 9 PM and allow about 30 minutes.</div>
     <div class="late" id="late" hidden>It is past 9 PM. You can still send your order and we will confirm the earliest time we can deliver.</div>
+  </section>
+
+  <section class="card" id="acctCard">
+    <div id="acctBar" class="acctbar"><span id="acctTxt">You can order as a guest, or log in to keep your orders and details.</span><button type="button" class="link" id="acctToggle">Log in / Create account</button></div>
+    <div id="authBox" hidden>
+      <div class="tabs2"><button type="button" class="on" id="amLogin">Log in</button><button type="button" id="amSign">Create account</button></div>
+      <div class="field" id="aNameF" hidden><label class="lb" for="aName">Your name</label><input id="aName" type="text" autocomplete="name"></div>
+      <div class="field"><label class="lb" for="aEmail">Email</label><input id="aEmail" type="email" autocomplete="email" inputmode="email"></div>
+      <div class="field"><label class="lb" for="aPass">Password</label><input id="aPass" type="password" autocomplete="current-password"><div class="hint" id="aHint" hidden>At least 6 characters. Orders you placed as a guest on this phone stay in your account.</div></div>
+      <button class="btn pri" type="button" id="aGo">Log in</button>
+      <button class="btn" type="button" id="aGoogle">Continue with Google</button>
+      <div class="alt" style="text-align:left"><button type="button" class="link" id="aForgot">Forgot password?</button></div>
+      <div class="msg2" id="aMsg"></div>
+    </div>
   </section>
 
   <section class="card">
@@ -268,8 +297,14 @@ body.locked main,body.locked .notify{display:none!important}
 
   <section class="card" id="myOrders" hidden>
     <h2>Your orders</h2>
-    <div class="sub">Live status of orders placed from this phone or browser.</div>
+    <div class="sub">Live status of your orders. Log in to see them on any phone. Once an order is delivered you can rate it here.</div>
     <div id="myList"></div>
+  </section>
+
+  <section class="card" id="pubRev" hidden>
+    <h2>What customers say</h2>
+    <div class="sub" id="pubSum"></div>
+    <div id="pubList"></div>
   </section>
 
   <section class="card" id="sumCard">
@@ -468,10 +503,11 @@ function stg(o){
 }
 function renderMine(list){
   myList=list.slice().sort(function(a,b){return a.orderedAt<b.orderedAt?1:-1});
+  var sig=JSON.stringify([myList.map(function(o){return [o.id,o.status,o.cancelled,o.billNo,o.total]}),Object.keys(myRev).map(function(k){return [k,myRev[k].reply]}),Object.keys(drafts).length]); if(sig===lastSig&&list.length) {update();return} lastSig=sig;
   $('myOrders').hidden=!myList.length;
   $('myList').innerHTML=myList.slice(0,10).map(function(o){
     var t=stg(o), its=(o.items||[]).map(function(i){return i.qty+' x '+i.name+(i.size?' ('+i.size+')':'')}).join(', ');
-    return '<div class="mo"><div class="t1"><span>'+(o.billNo?esc(o.billNo)+' &middot; ':'')+esc(new Date(o.orderedAt).toLocaleString('en-IN',{day:'numeric',month:'short',hour:'numeric',minute:'2-digit',hour12:true}))+'</span><b>'+inr(o.total||0)+'</b></div><div class="t2">'+esc(its)+'</div><span class="st '+t[1]+'">'+esc(t[0])+'</span>'+(o.cancelled&&o.cancelReason?'<div class="t2">'+esc(o.cancelReason)+'</div>':'')+'</div>';
+    return '<div class="mo"><div class="t1"><span>'+(o.billNo?esc(o.billNo)+' &middot; ':'')+esc(new Date(o.orderedAt).toLocaleString('en-IN',{day:'numeric',month:'short',hour:'numeric',minute:'2-digit',hour12:true}))+'</span><b>'+inr(o.total||0)+'</b></div><div class="t2">'+esc(its)+'</div><span class="st '+t[1]+'">'+esc(t[0])+'</span>'+(o.cancelled&&o.cancelReason?'<div class="t2">'+esc(o.cancelReason)+'</div>':'')+(o.status==='done'&&!o.cancelled&&isReg()?rateHtml(o):(o.status==='done'&&!o.cancelled?'<div class="rate"><span class="t2">Log in (top of page) to rate this order.</span></div>':''))+'</div>';
   }).join('');
   update();
 }
@@ -489,14 +525,96 @@ function placeOrder(s){
       subtotal:s.sub,deliveryCharge:s.dc,discount:0,discType:'amt',discValue:0,total:s.total};
     return MJFB.place(id,d);
   }).then(function(){
-    lastOrderAt=Date.now(); var url='https://wa.me/91'+PHONE+'?text='+encodeURIComponent(message(s));
+    lastOrderAt=Date.now(); try{if(me) MJFB.saveProfile(me.uid,{anon:me.anon,name:s.name,email:s.email||me.email||'',phone:s.phone,address:s.address,provider:me.provider}).catch(function(){})}catch(e){}
+    var url='https://wa.me/91'+PHONE+'?text='+encodeURIComponent(message(s));
     Object.keys(qty).forEach(function(k){setQty(k,0)}); btn.textContent='Place order'; update();
     showDone('<b>Order placed!</b> Mon Jai has received your order and will confirm it shortly. Follow its progress under <b>Your orders</b> below.<br>To get a faster reply you can also <a href="'+url+'" target="_blank" rel="noopener">tell us on WhatsApp</a>.');
     $('myOrders').hidden=!myList.length;
   }).catch(fail);
 }
 $('btnSend').addEventListener('click',function(){var s=snap(),p=problems(s); if(p.length){say(p.join(' '));return} say(''); placeOrder(s)});
-whenFB(function(){MJFB.uid().then(function(u){MJFB.mine(u,renderMine,function(){})}).catch(function(){})});
+
+/* ---------- login, profile, reviews ---------- */
+var me=null, unM=null, unR=null, myRev={}, drafts={}, ordersRaw=[], lastSig='', amode='login';
+function star(n){n=+n||0;return '★'.repeat(n)+'☆'.repeat(5-n)}
+function firstName(n){return String(n||'Customer').trim().split(/\s+/)[0]}
+function isReg(){return me&&!me.anon}
+function setAuthMsg(t){$('aMsg').textContent=t||''}
+function authErr(e){var c=(e&&e.code)||''; return {'auth/invalid-credential':'Wrong email or password.','auth/wrong-password':'Wrong email or password.','auth/user-not-found':'No account with this email. Use Create account.','auth/email-already-in-use':'This email already has an account. Use Log in.','auth/weak-password':'Password must be at least 6 characters.','auth/invalid-email':'Enter a valid email.','auth/popup-closed-by-user':'Sign-in window was closed.','auth/popup-blocked':'Allow pop-ups for this page and try again.','auth/operation-not-allowed':'This sign-in method is not switched on yet.','auth/network-request-failed':'No internet connection.','auth/too-many-requests':'Too many tries. Wait a few minutes.'}[c]||'Something went wrong. Please try again.'}
+function drawAcct(){
+  if(isReg()){$('acctTxt').innerHTML='Hi <b>'+esc(firstName(me.name||me.email))+'</b> &middot; '+esc(me.email||'');$('acctToggle').textContent='Sign out';$('authBox').hidden=true}
+  else{$('acctTxt').textContent='You can order as a guest, or log in to keep your orders and details.';$('acctToggle').textContent=$('authBox').hidden?'Log in / Create account':'Close'}
+}
+function setMode(m){amode=m;$('amLogin').classList.toggle('on',m==='login');$('amSign').classList.toggle('on',m==='sign');$('aNameF').hidden=m!=='sign';$('aHint').hidden=m!=='sign';$('aGo').textContent=m==='sign'?'Create account':'Log in';$('aPass').setAttribute('autocomplete',m==='sign'?'new-password':'current-password');setAuthMsg('')}
+$('acctToggle').addEventListener('click',function(){
+  if(isReg()){MJFB.signOut().then(function(){['cName','cPhone','cEmail','cAddr'].forEach(function(i){$(i).value=''});try{localStorage.removeItem('mj_cust')}catch(e){} update()});return}
+  $('authBox').hidden=!$('authBox').hidden; drawAcct();
+});
+$('amLogin').addEventListener('click',function(){setMode('login')}); $('amSign').addEventListener('click',function(){setMode('sign')});
+$('aGo').addEventListener('click',function(){
+  var em=$('aEmail').value.trim(), pw=$('aPass').value, nm=$('aName').value.trim();
+  if(!em||!pw){setAuthMsg('Enter your email and password.');return}
+  if(amode==='sign'&&pw.length<6){setAuthMsg('Password must be at least 6 characters.');return}
+  setAuthMsg('Please wait...'); $('aGo').disabled=true;
+  (amode==='sign'?MJFB.signUp(em,pw,nm):MJFB.signIn(em,pw)).then(function(){setAuthMsg('');$('aPass').value=''}).catch(function(e){setAuthMsg(authErr(e))}).then(function(){$('aGo').disabled=false});
+});
+$('aGoogle').addEventListener('click',function(){setAuthMsg('');MJFB.google().catch(function(e){setAuthMsg(authErr(e))})});
+$('aForgot').addEventListener('click',function(){var em=$('aEmail').value.trim(); if(!em){setAuthMsg('Type your email above first.');return} MJFB.reset(em).then(function(){setAuthMsg('Password reset link sent to '+em+'. Check your inbox and spam.')}).catch(function(e){setAuthMsg(authErr(e))})});
+function fillFromProfile(p){
+  function put(id,v){if(v&&!$(id).value) $(id).value=v}
+  put('cName',p&&p.name||me.name); put('cPhone',p&&p.phone); put('cEmail',p&&p.email||me.email); put('cAddr',p&&p.address); update();
+}
+function onUser(u){
+  var prev=me, changed=!prev||prev.uid!==u.uid, upgraded=prev&&prev.uid===u.uid&&prev.anon&&!u.anon; me=u; drawAcct();
+  if(!changed&&!upgraded){return}
+  if(upgraded){MJFB.touch(u.uid,{anon:false,name:u.name||'',email:u.email||'',provider:u.provider}).catch(function(){});MJFB.profile(u.uid).then(fillFromProfile).catch(function(){});lastSig='';renderMine(ordersRaw);return}
+  MJFB.touch(u.uid,{anon:u.anon,name:u.name||'',email:u.email||'',provider:u.provider}).catch(function(){});
+  if(!u.anon) MJFB.profile(u.uid).then(fillFromProfile).catch(function(){fillFromProfile(null)});
+  if(unM) try{unM()}catch(e){} if(unR) try{unR()}catch(e){}
+  myRev={}; lastSig=''; ordersRaw=[]; renderMine([]);
+  unM=MJFB.mine(u.uid,function(l){ordersRaw=l;renderMine(l)},function(){});
+  unR=MJFB.reviewsMine(u.uid,function(l){myRev={};l.forEach(function(r){myRev[r.orderId]=r});lastSig='';renderMine(ordersRaw)},function(){});
+}
+whenFB(function(){MJFB.onAuth(onUser); MJFB.reviewsPublic(renderPub,function(){})});
+function renderPub(list){
+  var l=list.filter(function(r){return r.rating});
+  $('pubRev').hidden=!l.length; if(!l.length) return;
+  var avg=l.reduce(function(s,r){return s+r.rating},0)/l.length;
+  $('pubSum').innerHTML='<b style="color:#c98a00">'+star(Math.round(avg))+'</b> '+avg.toFixed(1)+' average from '+l.length+' review'+(l.length>1?'s':'');
+  $('pubList').innerHTML=l.slice(0,5).map(function(r){return '<div class="pr"><b style="color:#c98a00">'+star(r.rating)+'</b> '+esc(firstName(r.name))+(r.comment?'<div>'+esc(r.comment)+'</div>':'')+(r.reply?'<div class="reply"><b>Mon Jai:</b> '+esc(r.reply)+'</div>':'')+'</div>'}).join('');
+}
+function safeKey(k){return String(k).replace(/[^A-Za-z0-9_-]/g,'_')}
+function rateHtml(o){
+  var r=myRev[o.id];
+  if(r){return '<div class="rate"><b style="color:#c98a00">'+star(r.rating)+'</b> Thanks for your feedback!'+(r.comment?'<div>'+esc(r.comment)+'</div>':'')+(r.reply?'<div class="reply"><b>Mon Jai replied:</b> '+esc(r.reply)+'</div>':'')+'</div>'}
+  var d=drafts[o.id];
+  if(!d||!d.open) return '<div class="rate"><button type="button" class="link" data-rate="open" data-id="'+esc(o.id)+'">Rate this order</button></div>';
+  var h='<div class="rate"><div class="row2"><b>Overall</b><span>'+[1,2,3,4,5].map(function(n){return '<button type="button" class="sb" data-rate="star" data-id="'+esc(o.id)+'" data-n="'+n+'" aria-label="'+n+' stars">'+(n<=d.rating?'★':'☆')+'</button>'}).join('')+'</span></div>';
+  h+='<textarea rows="2" maxlength="400" data-rate="cm" data-id="'+esc(o.id)+'" placeholder="Tell us about the food and delivery (optional)">'+esc(d.comment||'')+'</textarea>';
+  (o.items||[]).forEach(function(i){var k=safeKey(i.id), x=(d.items[k]||{r:0,c:''});
+    h+='<div class="row2"><span>'+esc(i.name)+(i.size?' ('+esc(i.size)+')':'')+'</span><span>'+[1,2,3,4,5].map(function(n){return '<button type="button" class="sb" style="font-size:20px" data-rate="istar" data-id="'+esc(o.id)+'" data-k="'+k+'" data-n="'+n+'" aria-label="'+n+' stars">'+(n<=x.r?'★':'☆')+'</button>'}).join('')+'</span></div><input type="text" maxlength="200" data-rate="icm" data-id="'+esc(o.id)+'" data-k="'+k+'" value="'+esc(x.c||'')+'" placeholder="Comment on this item (optional)">';
+  });
+  return h+'<div class="row2"><button type="button" class="btn pri" data-rate="send" data-id="'+esc(o.id)+'">Submit review</button><button type="button" class="link" data-rate="close" data-id="'+esc(o.id)+'">Cancel</button></div><div class="msg2" id="rm-'+esc(o.id)+'"></div></div>';
+}
+function submitReview(o){
+  var d=drafts[o.id], m=$('rm-'+o.id);
+  if(!d||!d.rating){m.textContent='Please tap the overall stars first.';return}
+  var items={}; (o.items||[]).forEach(function(i){var k=safeKey(i.id), x=d.items[k]; if(x&&(x.r||x.c)) items[k]={n:String(i.name).slice(0,60),r:x.r||0,c:(x.c||'').slice(0,200)}});
+  var data={orderId:o.id,billNo:o.billNo||'',uid:me.uid,name:(o.name||me.name||'Customer').slice(0,60),rating:d.rating,comment:(d.comment||'').trim().slice(0,400),items:items,createdAt:new Date().toISOString()};
+  m.textContent='Sending...'; MJFB.review(o.id,data).then(function(){delete drafts[o.id]}).catch(function(){m.textContent='Could not send. Please try again.'});
+}
+$('myList').addEventListener('click',function(e){
+  var b=e.target.closest('[data-rate]'); if(!b) return; var id=b.getAttribute('data-id'), a=b.getAttribute('data-rate'), o=myList.filter(function(x){return x.id===id})[0]; if(!o) return;
+  var d=drafts[id]||(drafts[id]={open:false,rating:0,comment:'',items:{}});
+  if(a==='open'){d.open=true} else if(a==='close'){d.open=false} else if(a==='star'){d.rating=+b.getAttribute('data-n')}
+  else if(a==='istar'){var k=b.getAttribute('data-k'); (d.items[k]=d.items[k]||{r:0,c:''}).r=+b.getAttribute('data-n')}
+  else if(a==='send'){submitReview(o);return}
+  lastSig=''; renderMine(ordersRaw);
+});
+$('myList').addEventListener('input',function(e){
+  var t=e.target, a=t.getAttribute('data-rate'), id=t.getAttribute('data-id'); if(!a||!drafts[id]) return;
+  if(a==='cm') drafts[id].comment=t.value; else if(a==='icm'){var k=t.getAttribute('data-k'); (drafts[id].items[k]=drafts[id].items[k]||{r:0,c:''}).c=t.value}
+});
 $('btnCopy').addEventListener('click',function(){
   var s=snap(),p=problems(s); if(p.length){say(p.join(' '));return}
   var t=message(s);
@@ -513,19 +631,60 @@ syncTog(); update();
 </script>
 <script type="module">
 import {initializeApp} from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
-import {getAuth,signInAnonymously,onAuthStateChanged} from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
-import {getFirestore,collection,doc,setDoc,query,where,onSnapshot} from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+import {getAuth,onAuthStateChanged,signInAnonymously,createUserWithEmailAndPassword,signInWithEmailAndPassword,signInWithPopup,signInWithCredential,linkWithCredential,linkWithPopup,GoogleAuthProvider,EmailAuthProvider,sendPasswordResetEmail,signOut,updateProfile} from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
+import {getFirestore,collection,doc,setDoc,getDoc,query,where,orderBy,limit,onSnapshot,increment} from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 const firebaseConfig={apiKey:"AIzaSyAf_y-afFfjnuxaGavsLVHfZPN5W2O_V_Q",authDomain:"monjai-d55ac.firebaseapp.com",projectId:"monjai-d55ac",storageBucket:"monjai-d55ac.firebasestorage.app",messagingSenderId:"585997388232",appId:"1:585997388232:web:e0eadea8c1947e26e158fd"};
 const app=initializeApp(firebaseConfig,'customer');
 const auth=getAuth(app);
 const db=getFirestore(app);
-const uidP=new Promise(res=>onAuthStateChanged(auth,u=>{if(u)res(u.uid)}));
-signInAnonymously(auth).catch(()=>{});
+const subs=[]; let first=true;
+function info(u){return u?{uid:u.uid,anon:u.isAnonymous,email:u.email||'',name:u.displayName||'',provider:u.isAnonymous?'guest':((u.providerData[0]&&u.providerData[0].providerId)==='google.com'?'google':'password')}:null}
+function emit(){const i=info(auth.currentUser); subs.forEach(cb=>cb(i))}
+onAuthStateChanged(auth,u=>{ if(!u){ if(first||true){ signInAnonymously(auth).catch(()=>{}) } return } first=false; emit() });
+const uidP=()=>new Promise((res,rej)=>{ if(auth.currentUser) return res(auth.currentUser.uid); const t=setTimeout(()=>rej(new Error('timeout')),9000); const off=onAuthStateChanged(auth,u=>{if(u){clearTimeout(t);off();res(u.uid)}}) });
 window.MJFB={
-  uid:()=>Promise.race([uidP,new Promise((_,rej)=>setTimeout(()=>rej(new Error('timeout')),9000))]),
+  uid:uidP,
+  user:()=>info(auth.currentUser),
+  onAuth:(cb)=>{subs.push(cb); if(auth.currentUser) cb(info(auth.currentUser))},
   newId:()=>doc(collection(db,'orders')).id,
   place:(id,data)=>setDoc(doc(db,'orders',id),data),
-  mine:(uid,cb,err)=>onSnapshot(query(collection(db,'orders'),where('uid','==',uid)),s=>cb(s.docs.map(d=>d.data())),err)
+  mine:(uid,cb,err)=>onSnapshot(query(collection(db,'orders'),where('uid','==',uid)),s=>cb(s.docs.map(d=>d.data())),err),
+  signUp:async(email,pw,name)=>{
+    const u=auth.currentUser;
+    if(u&&u.isAnonymous){await linkWithCredential(u,EmailAuthProvider.credential(email,pw))} else {await createUserWithEmailAndPassword(auth,email,pw)}
+    if(name) await updateProfile(auth.currentUser,{displayName:name});
+    emit();
+  },
+  signIn:async(email,pw)=>{await signInWithEmailAndPassword(auth,email,pw); emit()},
+  google:async()=>{
+    const p=new GoogleAuthProvider(), u=auth.currentUser;
+    if(u&&u.isAnonymous){
+      try{await linkWithPopup(u,p)}
+      catch(e){ if(e.code==='auth/credential-already-in-use'){const c=GoogleAuthProvider.credentialFromError(e); await signInWithCredential(auth,c)} else throw e }
+    } else await signInWithPopup(auth,p);
+    emit();
+  },
+  reset:(email)=>sendPasswordResetEmail(auth,email),
+  signOut:async()=>{await signOut(auth)},
+  profile:async(uid)=>{const d=await getDoc(doc(db,'users',uid)); return d.exists()?d.data():null},
+  saveProfile:async(uid,p)=>{
+    const ref=doc(db,'users',uid), cur=await getDoc(ref), now=new Date().toISOString(), old=cur.exists()?cur.data():null;
+    const data=Object.assign({},old||{},p,{uid:uid,lastSeen:now});
+    if(!old){data.createdAt=now; data.visits=1}
+    if(p.anon===false&&(!old||old.anon!==false)) data.registeredAt=now;
+    await setDoc(ref,data);
+  },
+  touch:async(uid,p)=>{
+    const ref=doc(db,'users',uid), cur=await getDoc(ref), now=new Date().toISOString();
+    if(!cur.exists()){await setDoc(ref,Object.assign({},p,{uid:uid,createdAt:now,lastSeen:now,visits:1})); return}
+    const o=cur.data(); if(o.lastSeen&&Date.now()-new Date(o.lastSeen)<30*60000&&o.anon===p.anon) return;
+    const data=Object.assign({},o,p,{uid:uid,lastSeen:now,visits:(o.visits||0)+1});
+    if(p.anon===false&&o.anon!==false) data.registeredAt=now;
+    await setDoc(ref,data);
+  },
+  reviewsMine:(uid,cb,err)=>onSnapshot(query(collection(db,'reviews'),where('uid','==',uid)),s=>cb(s.docs.map(d=>d.data())),err),
+  reviewsPublic:(cb,err)=>onSnapshot(query(collection(db,'reviews'),orderBy('createdAt','desc'),limit(30)),s=>cb(s.docs.map(d=>d.data())),err),
+  review:(id,data)=>setDoc(doc(db,'reviews',id),data)
 };
 window.dispatchEvent(new Event('mjfb'));
 
