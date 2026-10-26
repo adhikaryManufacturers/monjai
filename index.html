@@ -151,10 +151,13 @@ input[readonly]{opacity:.8}
 body:not([data-view=new]) .v-new{display:none!important}
 body:not([data-view=ord]) .v-ord{display:none!important}
 body:not([data-view=rev]) .v-rev{display:none!important}
+body:not([data-view=exp]) .v-exp{display:none!important}
+body:not([data-view=menu]) .v-menu{display:none!important}
 body:not([data-view=bills]) .v-bills{display:none!important}
 body:not([data-view=dash]) .v-dash{display:none!important}
 body[data-view=bills] main,body[data-view=dash] main{max-width:1180px}
-body[data-view=ord] main,body[data-view=rev] main{max-width:900px}
+body[data-view=ord] main,body[data-view=rev] main,body[data-view=exp] main{max-width:900px}
+body[data-view=menu] main{max-width:1100px}
 .flt{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px 18px}
 .quick{font-size:13px;margin:10px 0 4px}
 .sumline{font-size:14px;margin:10px 0;padding:10px 12px;background:var(--accent-soft);border-radius:6px}
@@ -231,6 +234,23 @@ body.locked main,body.locked .notify{display:none!important}
 .rv .btns button{font:inherit;font-size:12.5px;padding:5px 11px;border-radius:6px;border:1px solid var(--accent);background:var(--card);color:var(--accent);cursor:pointer}
 .rv .btns button.pri{background:var(--accent);color:var(--on-accent)}.rv .btns button.dg{border-color:var(--danger);color:var(--danger)}
 .act{display:grid;grid-template-columns:auto 1fr;gap:2px 10px;border-top:1px solid var(--line);padding:8px 0;font-size:13.5px}.act small{color:var(--muted);white-space:nowrap}
+
+.eform{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;align-items:end;margin-top:8px}
+.eform label{display:flex;flex-direction:column;gap:4px;font-size:12.5px;color:var(--muted)}.eform label.wide{grid-column:span 2}
+.eform input,.eform select{width:100%}.ebtn{display:flex;gap:8px;flex-wrap:wrap}.ebtn .btn{padding:10px 16px}
+@media(max-width:520px){.eform label.wide{grid-column:span 1}}
+.btn.sm{font-size:12.5px;padding:4px 10px}
+
+.mcat{border:1px solid var(--line);border-radius:10px;padding:12px;margin-top:14px;background:var(--card)}
+.mch{display:grid;grid-template-columns:minmax(150px,230px) 1fr auto;gap:10px;align-items:end;margin-bottom:10px}
+.mch label{display:block;font-size:12.5px;color:var(--muted)}.mch input{width:100%;margin-top:3px}
+.mbt{display:flex;gap:6px;white-space:nowrap}.mbt .btn{padding:8px 11px}
+.mtab{min-width:760px}.mtab td{padding:5px 6px;vertical-align:middle}.mtab input[type=text]{width:100%}
+.sw{display:flex;align-items:center;gap:6px;font-size:13px;white-space:nowrap}
+.mact{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px;position:sticky;bottom:0;background:var(--card);padding:10px 0}
+.mhead{display:flex;gap:10px;align-items:center}.tag2{background:#fff3cd;color:#7a5b00;border-radius:999px;padding:3px 10px;font-size:12px;font-weight:600}
+.btn.dng{color:var(--danger)}
+@media(max-width:700px){.mch{grid-template-columns:1fr}.mbt{flex-wrap:wrap}}
 
 .row-h{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px}.row-h h2{margin:0}
 .late{margin-top:12px;padding:10px 12px;border-radius:6px;background:#fff4d6;color:#5b4400;font-size:13.5px}
@@ -412,6 +432,12 @@ body:not([data-sub=orders]) #myOrders{display:none!important}
 @media(max-width:420px){.tlogo{height:52px}}
 .sl svg{width:132px;height:132px}.sl{grid-template-columns:132px 1fr}
 @media(max-width:430px){.sl svg{width:92px;height:92px}.sl{grid-template-columns:92px 1fr}}
+
+.nwa{margin-top:8px;font-size:13.5px;padding:7px 12px}
+.nwabox{margin-top:10px;padding:12px 14px;border-radius:10px;background:#fff4d6;color:#5b4400;font-size:13.5px;line-height:1.5}
+.nwabox .btn{display:inline-flex;margin-top:8px;text-decoration:none;color:#fff}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .nwabox{background:#3a3000;color:#ffe9a6}}
+.row.off{opacity:.6}.row.off .price{text-decoration:line-through}.row .so{font-size:12px;font-weight:700;color:#9e2a14;background:#fde8e4;border-radius:999px;padding:4px 10px;white-space:nowrap}
 </style></head><body>
 <header class="top">
   <div class="topin">
@@ -477,7 +503,7 @@ body:not([data-sub=orders]) #myOrders{display:none!important}
     <section class="card" id="detCard">
     <h2>Your details</h2>
     <div class="field"><label class="lb" for="cName">Your name <span class="req">*</span></label><input id="cName" type="text" autocomplete="name" placeholder="Name"></div>
-    <div class="field"><label class="lb" for="cPhone">Mobile number <span class="req">*</span></label><input id="cPhone" type="tel" inputmode="numeric" autocomplete="tel" placeholder="10-digit number"><div class="hint" id="phoneHint"></div></div>
+    <div class="field"><label class="lb" for="cPhone">WhatsApp number <span class="req">*</span></label><input id="cPhone" type="tel" inputmode="numeric" autocomplete="tel" placeholder="10-digit number"><div class="hint">Please use your <b>WhatsApp number</b>. We send your bill and order updates there.</div><div class="hint" id="phoneHint"></div><label class="opt nwa"><input type="checkbox" id="noWa"> This number is not on WhatsApp</label><div class="nwabox" id="noWaMsg" hidden><b>Your number is not linked with WhatsApp.</b> Please use your WhatsApp number, or call us directly and we will confirm your order.<a class="btn pri" href="tel:+919036435865">Call 9036435865</a></div></div>
     <div class="field"><label class="lb" for="cEmail">Email (optional, if you want the bill by email too)</label><input id="cEmail" type="email" inputmode="email" autocomplete="email" placeholder="you@example.com"></div>
     <div class="field"><div class="lb">How do you want it?</div>
       <div class="opts">
@@ -510,7 +536,7 @@ body:not([data-sub=orders]) #myOrders{display:none!important}
     <div id="authBox" hidden>
       <div class="tabs2"><button type="button" class="on" id="amLogin">Log in</button><button type="button" id="amSign">Create account</button></div>
       <div class="field" id="aNameF" hidden><label class="lb" for="aName">Your name</label><input id="aName" type="text" autocomplete="name"></div>
-      <div class="field" id="aPhoneF" hidden><label class="lb" for="aPhone">Mobile number (for delivery updates)</label><input id="aPhone" type="tel" inputmode="numeric" autocomplete="tel" placeholder="10-digit number"></div>
+      <div class="field" id="aPhoneF" hidden><label class="lb" for="aPhone">WhatsApp number (for bill and order updates)</label><input id="aPhone" type="tel" inputmode="numeric" autocomplete="tel" placeholder="10-digit number"></div>
       <div class="field"><label class="lb" for="aEmail">Email</label><input id="aEmail" type="email" autocomplete="email" inputmode="email"></div>
       <div class="field"><label class="lb" for="aPass">Password</label><input id="aPass" type="password" autocomplete="current-password"><div class="hint" id="aHint" hidden>At least 6 characters. Orders you placed as a guest on this phone stay in your account.</div></div>
       <button class="btn pri" type="button" id="aGo">Log in</button>
@@ -534,7 +560,7 @@ body:not([data-sub=orders]) #myOrders{display:none!important}
       <div class="sub" id="pMeta"></div>
       <div class="field"><label class="lb" for="pName">Name</label><input id="pName" type="text" autocomplete="name"></div>
       <div class="field"><label class="lb" for="pEmail">Email</label><input id="pEmail" type="email" disabled></div>
-      <div class="field"><label class="lb" for="pPhone">Mobile number</label><input id="pPhone" type="tel" inputmode="numeric" autocomplete="tel" placeholder="10-digit number"></div>
+      <div class="field"><label class="lb" for="pPhone">WhatsApp number</label><input id="pPhone" type="tel" inputmode="numeric" autocomplete="tel" placeholder="10-digit number"></div>
       <div class="field"><label class="lb" for="pAddr">Delivery address</label><textarea id="pAddr" rows="2" autocomplete="street-address" placeholder="House / street / landmark, ward"></textarea></div>
       <button class="btn pri" type="button" id="pSave">Save profile</button>
       <div class="msg2" id="pMsg"></div>
@@ -576,7 +602,7 @@ body:not([data-sub=orders]) #myOrders{display:none!important}
 (function(){
 'use strict';
 var PHONE='9036435865', FREE_ABOVE=300, DELIVERY=30;
-var MENU=[
+var MENU_DEFAULT=[
  {cat:'Biriyani',desc:'Fragrant basmati and tender chicken, slow-cooked with the Kolkata touch of a soft potato and egg.',items:[
   ['b1','Kolkata Dum Biriyani (Chicken)','Full, approx. 1 kg',349],
   ['b2','Kolkata Dum Biriyani (Chicken) + Kabab (6 pc) + Coke/Sprite','Full, approx. 1 kg',429],
@@ -612,26 +638,51 @@ var MENU=[
   ['s1','Sprite','Size 1',25],['s2','Sprite','Size 2',45],['s3','Sprite','Size 3',85],['s4','Sprite','Size 4',115],
   ['d4','Lime Soda','',39],['d5','Cold Coffee','',69]]}
 ];
+var MENU=JSON.parse(JSON.stringify(MENU_DEFAULT));
+/* menu as stored online: {cats:[{cat,desc,items:[{id,name,size,price,note,off}]}]} (Firestore has no nested arrays) */
+function menuFromDoc(d){
+  if(!d||!d.cats||!d.cats.length) return null;
+  var seen={}, out=[];
+  d.cats.forEach(function(c){
+    var items=[]; (c.items||[]).forEach(function(i){
+      if(!i||!i.id||seen[i.id]||!i.name) return; seen[i.id]=1;
+      items.push([String(i.id),String(i.name),String(i.size||''),Number(i.price)||0,String(i.note||''),i.off?1:0]);
+    });
+    out.push({cat:String(c.cat||'Untitled'),desc:String(c.desc||''),items:items});
+  });
+  return out;
+}
+function menuToDoc(M){
+  return {cats:M.map(function(c){return {cat:c.cat,desc:c.desc||'',items:c.items.map(function(i){return {id:i[0],name:i[1],size:i[2]||'',price:Number(i[3])||0,note:i[4]||'',off:!!i[5]}})}}),updated:new Date().toISOString()};
+}
+
 var $=function(id){return document.getElementById(id)};
 var inr=function(n){return '₹'+Number(n).toLocaleString('en-IN')};
 var esc=function(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})};
 var BYID={},GRP={},ORDER=[],qty={};
-MENU.forEach(function(c,ci){c.items.forEach(function(i){BYID[i[0]]={id:i[0],name:i[1],size:i[2],price:i[3]};GRP[i[0]]=ci;ORDER.push(i[0])})});
+try{var _mc=JSON.parse(localStorage.getItem('mj_menu')||'null'), _mm=_mc&&menuFromDoc(_mc); if(_mm) MENU=_mm}catch(e){}
+function indexMenu(){BYID={};GRP={};ORDER=[];MENU.forEach(function(c,ci){c.items.forEach(function(i){BYID[i[0]]={id:i[0],name:i[1],size:i[2],price:i[3],off:!!i[5]};GRP[i[0]]=ci;ORDER.push(i[0])})})}
+indexMenu();
 function val(id){return $(id).value.trim()}
 function radio(n){var r=document.querySelector('input[name='+n+']:checked');return r?r.value:''}
 function digits(v){var d=String(v||'').replace(/\D/g,'');if(d.length===12&&d.indexOf('91')===0)d=d.slice(2);if(d.length===11&&d[0]==='0')d=d.slice(1);return d}
 function validEmail(v){return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v||'')}
-var mh='';
-MENU.forEach(function(c,ci){
-  mh+='<details class="cat"><summary><span class="ct">'+esc(c.cat)+'</span><span class="badge" id="badge-'+ci+'"></span></summary>'+(c.desc?'<p class="d">'+esc(c.desc)+'</p>':'');
-  c.items.forEach(function(i){
-    mh+='<div class="row" id="row-'+i[0]+'"><div class="nm"><b>'+esc(i[1])+(i[4]?' *':'')+'</b><span class="rt" id="rt-'+i[0]+'"></span>'+(i[2]?'<span>'+esc(i[2])+'</span>':'')+(i[4]?'<br><em>'+esc(i[4])+'</em>':'')+'</div><div class="price">'+inr(i[3])+'</div>'
-     +'<div class="step"><button type="button" data-d="-1" data-id="'+i[0]+'" aria-label="Remove one '+esc(i[1])+'">&minus;</button><span class="q" id="q-'+i[0]+'">0</span><button type="button" data-d="1" data-id="'+i[0]+'" aria-label="Add one '+esc(i[1])+'">+</button></div></div>';
+function buildMenu(){
+  var openCats={}; document.querySelectorAll('#menu details[open] .ct').forEach(function(e){openCats[e.textContent]=1});
+  var mh='';
+  MENU.forEach(function(c,ci){
+    if(!c.items.length) return;
+    mh+='<details class="cat"'+(openCats[c.cat]?' open':'')+'><summary><span class="ct">'+esc(c.cat)+'</span><span class="badge" id="badge-'+ci+'"></span></summary>'+(c.desc?'<p class="d">'+esc(c.desc)+'</p>':'');
+    c.items.forEach(function(i){
+      mh+='<div class="row'+(i[5]?' off':'')+'" id="row-'+i[0]+'"><div class="nm"><b>'+esc(i[1])+(i[4]?' *':'')+'</b><span class="rt" id="rt-'+i[0]+'"></span>'+(i[2]?'<span>'+esc(i[2])+'</span>':'')+(i[4]?'<br><em>'+esc(i[4])+'</em>':'')+'</div><div class="price">'+inr(i[3])+'</div>'
+       +(i[5]?'<div class="so">Sold out</div>':'<div class="step"><button type="button" data-d="-1" data-id="'+i[0]+'" aria-label="Remove one '+esc(i[1])+'">&minus;</button><span class="q" id="q-'+i[0]+'">0</span><button type="button" data-d="1" data-id="'+i[0]+'" aria-label="Add one '+esc(i[1])+'">+</button></div>')+'</div>';
+    });
+    mh+='</details>';
   });
-  mh+='</details>';
-});
-$('menu').innerHTML=mh;
-function setQty(id,n){n=Math.max(0,Math.min(99,n));if(n)qty[id]=n;else delete qty[id];$('q-'+id).textContent=n;$('row-'+id).classList.toggle('on',n>0)}
+  $('menu').innerHTML=mh;
+}
+buildMenu();
+function setQty(id,n){if(!$('q-'+id))return;n=Math.max(0,Math.min(99,n));if(n)qty[id]=n;else delete qty[id];$('q-'+id).textContent=n;$('row-'+id).classList.toggle('on',n>0)}
 function syncTog(){var a=document.querySelectorAll('#menu details'),o=document.querySelectorAll('#menu details[open]');$('togAll').textContent=o.length===a.length?'Collapse all':'Expand all'}
 $('menu').addEventListener('toggle',syncTog,true);
 $('togAll').addEventListener('click',function(){var a=document.querySelectorAll('#menu details'),o=document.querySelectorAll('#menu details[open]').length!==a.length;a.forEach(function(d){d.open=o});syncTog()});
@@ -656,7 +707,6 @@ function message(s){
   s.items.forEach(function(i){L.push(i.qty+' x '+i.name+(i.size?' ('+i.size+')':'')+' = '+inr(i.amount))});
   L.push('------------','Subtotal: '+inr(s.sub),s.del?'Delivery: '+(s.dc?inr(s.dc):'FREE'):'Pickup: no delivery charge','*Total: '+inr(s.total)+'*','Payment: '+s.pay);
   if(s.note) L.push('Note: '+s.note);
-  L.push('','Order code (for Mon Jai): '+code(s));
   return L.join('\n');
 }
 
@@ -731,9 +781,9 @@ function update(){
   else{h='<table><tbody>';s.items.forEach(function(i){h+='<tr><td>'+i.qty+' x '+esc(i.name)+(i.size?'<small>'+esc(i.size)+'</small>':'')+'</td><td class="n">'+inr(i.amount)+'</td></tr>'});
     h+='<tr><td>Subtotal</td><td class="n">'+inr(s.sub)+'</td></tr><tr><td>'+(s.del?'Delivery':'Pickup')+'</td><td class="n">'+(s.del?(s.dc?inr(s.dc):'FREE'):'-')+'</td></tr><tr class="g"><td>Total</td><td class="n">'+inr(s.total)+'</td></tr></tbody></table>'}
   $('sumBox').innerHTML=h;
-  MENU.forEach(function(c,ci){var n=0;c.items.forEach(function(i){n+=qty[i[0]]||0});$('badge-'+ci).textContent=n?n+' added':''});
+  MENU.forEach(function(c,ci){var n=0;c.items.forEach(function(i){n+=qty[i[0]]||0});var bg=$('badge-'+ci); if(bg) bg.textContent=n?n+' added':''});
   $('btnSend').disabled=!s.count; $('btnCopy').disabled=!s.count;
-  try{localStorage.setItem('mj_cust',JSON.stringify({n:s.name,p:val('cPhone'),e:s.email,a:val('cAddr'),t:radio('otype')}))}catch(e){}
+  try{localStorage.setItem('mj_cust',JSON.stringify({n:s.name,p:val('cPhone'),e:s.email,a:val('cAddr'),t:radio('otype'),nw:$('noWa').checked?1:0}))}catch(e){}
 }
 function say(t){$('msg').textContent=t||''}
 function showDone(html){$('done').innerHTML=html;$('done').hidden=false;$('done').scrollIntoView({behavior:'smooth',block:'nearest'})}
@@ -858,18 +908,19 @@ function renderMine(list){
 $('moCur').addEventListener('click',function(){moTab='cur';moPage=1;lastSig='';renderMine(ordersRaw)});
 $('moPast').addEventListener('click',function(){moTab='past';moPage=1;lastSig='';renderMine(ordersRaw)});
 $('myPager').addEventListener('click',function(e){var b=e.target.closest('[data-mp]'); if(!b) return; moPage+=+b.getAttribute('data-mp'); lastSig=''; renderMine(ordersRaw)});
+function noWaOn(){return !!$('noWa').checked}
 function placeOrder(s){
   var btn=$('btnSend'), pending=myList.filter(function(o){return !o.cancelled&&(!o.status||o.status==='new')}).length;
   if(pending>=5){say('You already have 5 orders waiting for confirmation. Please wait for Mon Jai to confirm them.');return}
   if(Date.now()-lastOrderAt<15000){say('Please wait a few seconds before sending another order.');return}
   if(!window.MJFB){sendText(s);return}
   btn.disabled=true; btn.textContent='Placing your order...';
-  var wa=null; try{wa=window.open('about:blank','_blank')}catch(e){}
+  var wa=null; if(!noWaOn()){try{wa=window.open('about:blank','_blank')}catch(e){}}
   var fail=function(){btn.textContent='Place order';update();say('We could not reach our order system, so we are opening WhatsApp instead. Press Send there.');var u='https://wa.me/91'+PHONE+'?text='+encodeURIComponent(message(s)); if(wa&&!wa.closed){wa.location.href=u}else sendText(s)};
   MJFB.uid().then(function(uid){
     var id=MJFB.newId(), d={id:id,uid:uid,source:'customer',status:'new',billNo:'',rev:1,revisions:[],payments:[],orderedAt:new Date().toISOString(),
       requestedFor:s.when&&!isNaN(new Date(s.when))?new Date(s.when).toISOString():'',name:s.name,phone:s.phone,email:s.email,address:s.address,type:s.del?'delivery':'pickup',
-      items:s.items.map(function(i){return {id:i.id,name:i.name,size:i.size||'',price:i.price,qty:i.qty}}),note:s.note,payPref:s.pay,
+      items:s.items.map(function(i){return {id:i.id,name:i.name,size:i.size||'',price:i.price,qty:i.qty}}),note:(noWaOn()?'[NO WHATSAPP] ':'')+s.note,payPref:s.pay,
       subtotal:s.sub,deliveryCharge:s.dc,discount:0,discType:'amt',discValue:0,total:s.total};
     return MJFB.place(id,d);
   }).then(function(){
@@ -877,7 +928,8 @@ function placeOrder(s){
     var url='https://wa.me/91'+PHONE+'?text='+encodeURIComponent(message(s));
     Object.keys(qty).forEach(function(k){setQty(k,0)}); btn.textContent='Place order'; update();
     var opened=false; if(wa&&!wa.closed){try{wa.location.href=url;opened=true}catch(e){}}
-    showDone('<b>Order placed!</b> Mon Jai has received it and will confirm shortly.<br>'+(opened?'WhatsApp has opened with your order. <b>Press Send there</b> so we can reply to you faster.':'<b>One more step:</b> tap the button to send the same order on WhatsApp.')+'<br><a class="btn pri big" style="display:block;text-align:center;text-decoration:none" href="'+url+'" target="_blank" rel="noopener">Send order on WhatsApp</a><div class="hint" style="margin-top:8px">Track it any time under <button type="button" class="link" data-go="orders">My orders</button>.</div>');
+    var nwDone=noWaOn();
+    showDone(nwDone?'<b>Order placed!</b> Mon Jai has received it. Since your number is not on WhatsApp, we will <b>call you on '+esc(s.phone)+'</b> to confirm. You can also call us on 9036435865.<br><a class="btn pri big" style="display:block;text-align:center;text-decoration:none" href="tel:+919036435865">Call Mon Jai</a><div class="hint" style="margin-top:8px">Track it any time under <button type="button" class="link" data-go="orders">My orders</button>.</div>':'<b>Order placed!</b> Mon Jai has received it and will confirm shortly.<br>'+(opened?'WhatsApp has opened with your order. <b>Press Send there</b> so we can reply to you faster.':'<b>One more step:</b> tap the button to send the same order on WhatsApp.')+'<br><a class="btn pri big" style="display:block;text-align:center;text-decoration:none" href="'+url+'" target="_blank" rel="noopener">Send order on WhatsApp</a><div class="hint" style="margin-top:8px">Track it any time under <button type="button" class="link" data-go="orders">My orders</button>.</div>');
     $('myOrders').hidden=!myList.length&&!isReg();
   }).catch(fail);
 }
@@ -942,7 +994,13 @@ function go(t,keep){
 document.addEventListener('click',function(e){var b=e.target.closest('[data-go]'); if(b){e.preventDefault(); go(b.getAttribute('data-go'))}});
 window.addEventListener('hashchange',function(){go(location.hash.slice(1),true)});
 $('acctChip').addEventListener('click',function(){if(!isReg()){$('authBox').hidden=false;drawAcct()}});
-whenFB(function(){MJFB.onAuth(onUser); MJFB.reviewsPublic(renderPub,function(){})});
+function refreshMenu(){
+  indexMenu(); buildMenu();
+  var old=qty; qty={}; Object.keys(old).forEach(function(id){if(BYID[id]&&!BYID[id].off){qty[id]=old[id]; setQty(id,old[id])}});
+  update(); renderPub(lastPub||[]); syncTog();
+}
+function applyMenu(d){var M=menuFromDoc(d); if(!M) return; MENU=M; try{localStorage.setItem('mj_menu',JSON.stringify(d))}catch(e){} refreshMenu()}
+whenFB(function(){MJFB.onAuth(onUser); MJFB.reviewsPublic(renderPub,function(){}); if(MJFB.listenMenu) MJFB.listenMenu(function(d){if(d.exists()) applyMenu(d.data())},function(){})});
 
 /* ---------- illustrations, dish slider, review carousel ---------- */
 var CATDESC={'Veg':'Rich, creamy paneer cooked the home-style way.','Gravy / Curry':'Slow-cooked gravy, best with naan or pulao.','Naan':'Soft, hot naan from the tandoor.','Beverages':'Cool drinks to go with your meal.'};
@@ -1021,7 +1079,9 @@ $('rcar').addEventListener('pointerdown',function(){rcS.hold=Date.now()+6000});
 setInterval(function(){ if(reduce||document.hidden||Date.now()<rcS.hold||rcS.n<2) return; var pages=Math.max(1,rcS.n-rcS.per+1); rcS.i=(rcS.i+1)%pages; moveRev() },3000);
 window.addEventListener('resize',function(){rcS.per=perView();moveRev()});
 function setTopRate(avg,n){ $('topRate').innerHTML=n?'<b>'+avg.toFixed(1)+'</b><i>'+star(Math.round(avg)).slice(0,5)+'</i><small>'+n+' review'+(n>1?'s':'')+'</small>':'<b>New</b>' }
+var lastPub=null;
 function renderPub(list){
+  lastPub=list;
   var l=list.filter(function(r){return r.rating});
   document.querySelectorAll('.rt').forEach(function(e){e.textContent=''});
   if(!l.length){setTopRate(0,0); buildSlides({}); buildReviews([]); return}
@@ -1075,7 +1135,8 @@ $('btnCopy').addEventListener('click',function(){
 $('btnView').addEventListener('click',function(){go('order')});
 ['cName','cPhone','cEmail','cAddr','cWhen','note'].forEach(function(id){$(id).addEventListener('input',update)});
 document.querySelectorAll('input[type=radio]').forEach(function(r){r.addEventListener('change',update)});
-try{var sv=JSON.parse(localStorage.getItem('mj_cust')||'null'); if(sv){$('cName').value=sv.n||'';$('cPhone').value=sv.p||'';$('cEmail').value=sv.e||'';$('cAddr').value=sv.a||'';var r=document.querySelector('input[name=otype][value="'+(sv.t||'delivery')+'"]');if(r)r.checked=true}}catch(e){}
+$('noWa').addEventListener('change',function(){$('noWaMsg').hidden=!this.checked;try{var o=JSON.parse(localStorage.getItem('mj_cust')||'{}');o.nw=this.checked?1:0;localStorage.setItem('mj_cust',JSON.stringify(o))}catch(e){}});
+try{var sv=JSON.parse(localStorage.getItem('mj_cust')||'null'); if(sv){if(sv.nw){$('noWa').checked=true;$('noWaMsg').hidden=false} $('cName').value=sv.n||'';$('cPhone').value=sv.p||'';$('cEmail').value=sv.e||'';$('cAddr').value=sv.a||'';var r=document.querySelector('input[name=otype][value="'+(sv.t||'delivery')+'"]');if(r)r.checked=true}}catch(e){}
 if(new Date().getHours()>=21) $('late').hidden=false;
 $('feeFact').textContent='On orders of '+inr(FREE_ABOVE)+' or more, otherwise '+inr(DELIVERY);
 buildSlides({}); buildReviews([]);
@@ -1102,6 +1163,7 @@ window.MJFB={
   uid:uidP,
   user:()=>info(auth.currentUser),
   onAuth:(cb)=>{subs.push(cb); if(auth.currentUser) cb(info(auth.currentUser))},
+  listenMenu:(cb,err)=>onSnapshot(doc(db,'meta','menu'),cb,err),
   newId:()=>doc(collection(db,'orders')).id,
   place:(id,data)=>setDoc(doc(db,'orders',id),data),
   mine:(uid,cb,err)=>onSnapshot(query(collection(db,'orders'),where('uid','==',uid)),s=>cb(s.docs.map(d=>d.data())),err),
