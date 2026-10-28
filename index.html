@@ -481,6 +481,7 @@ body:not([data-sub=orders]) #myOrders{display:none!important}
       <div class="row-h"><h2>What customers say</h2></div>
       <div class="rcar" id="rcar"><div class="rtrack" id="rTrack"></div></div>
       <div class="sdots dark" id="rDots"></div>
+      <div class="hint" id="sampleNote" hidden>Cards marked Sample are examples. Real customer comments replace them as they come in.</div>
     </section>
 
     <section class="card how">
@@ -1063,7 +1064,7 @@ function buildReviews(real){
   var need=Math.max(0,5-cards.length), samp=need>0;
   for(var k=0;k<need;k++) cards.push({real:0,r:SAMPLES[k].r,t:SAMPLES[k].t});
   $('sampleNote').hidden=!samp;
-  $('rTrack').innerHTML=cards.map(function(c){return '<div class="rc"><div class="rs">'+star(c.r)+'</div><div class="rt1">&ldquo;'+esc(c.t)+'&rdquo;</div>'+(c.reply?'<div class="reply"><b>Mon Jai:</b> '+esc(c.reply)+'</div>':'')+'<div class="rw"><span>'+(c.real?esc(c.n):'Mon Jai customer')+'</span>'+(c.real?'':'<span class="smp"></span>')+'</div></div>'}).join('');
+  $('rTrack').innerHTML=cards.map(function(c){return '<div class="rc"><div class="rs">'+star(c.r)+'</div><div class="rt1">&ldquo;'+esc(c.t)+'&rdquo;</div>'+(c.reply?'<div class="reply"><b>Mon Jai:</b> '+esc(c.reply)+'</div>':'')+'<div class="rw"><span>'+(c.real?esc(c.n):'Mon Jai customer')+'</span>'+(c.real?'':'<span class="smp">Sample</span>')+'</div></div>'}).join('');
   rcS.n=cards.length; rcS.per=perView(); rcS.i=0; moveRev();
 }
 function moveRev(){
