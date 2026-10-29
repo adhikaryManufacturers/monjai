@@ -251,6 +251,9 @@ body.locked main,body.locked .notify{display:none!important}
 .mhead{display:flex;gap:10px;align-items:center}.tag2{background:#fff3cd;color:#7a5b00;border-radius:999px;padding:3px 10px;font-size:12px;font-weight:600}
 .btn.dng{color:var(--danger)}
 @media(max-width:700px){.mch{grid-template-columns:1fr}.mbt{flex-wrap:wrap}}
+.mch.vw{grid-template-columns:1fr auto}.ctitle b{display:block;font-size:16px}.ctitle span{color:var(--muted);font-size:13px}
+.mtab td .btn{padding:7px 12px}.mtab tr:not(.ed) td{padding:9px 8px;border-bottom:1px solid var(--line)}.mtab tr.ed{background:#f6faf2}
+.so2{background:#fde8e4;color:#9e2a14;border-radius:999px;padding:2px 9px;font-size:12px;font-weight:600}
 
 .row-h{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px}.row-h h2{margin:0}
 .late{margin-top:12px;padding:10px 12px;border-radius:6px;background:#fff4d6;color:#5b4400;font-size:13.5px}
@@ -481,7 +484,7 @@ body:not([data-sub=orders]) #myOrders{display:none!important}
       <div class="row-h"><h2>What customers say</h2></div>
       <div class="rcar" id="rcar"><div class="rtrack" id="rTrack"></div></div>
       <div class="sdots dark" id="rDots"></div>
-      <div class="hint" id="sampleNote" hidden></div>
+      <div class="hint" id="sampleNote" hidden>Cards marked Sample are examples. Real customer comments replace them as they come in.</div>
     </section>
 
     <section class="card how">
@@ -787,17 +790,20 @@ function update(){
 }
 function say(t){$('msg').textContent=t||''}
 function showDone(html){$('done').innerHTML=html;$('done').hidden=false;$('done').scrollIntoView({behavior:'smooth',block:'nearest'})}
+function waApp(s){return 'whatsapp://send?phone=91'+PHONE+'&text='+encodeURIComponent(message(s))}
+function waWeb(s){return 'https://wa.me/91'+PHONE+'?text='+encodeURIComponent(message(s))}
+function waBtns(s){return '<a class="btn pri big" style="display:block;text-align:center;text-decoration:none" href="'+waApp(s)+'">Open WhatsApp and send order</a><div class="hint" style="margin-top:8px">WhatsApp did not open? <a href="'+waWeb(s)+'" target="_blank" rel="noopener">Open in browser (WhatsApp Web)</a> or <a href="tel:+91'+PHONE+'">call us</a>.</div>'}
+function openWaApp(s){if(/Firefox/.test(navigator.userAgent)&&!/Android/.test(navigator.userAgent)) return; try{location.href=waApp(s)}catch(e){}}
 function sendText(s){
-  var url='https://wa.me/91'+PHONE+'?text='+encodeURIComponent(message(s));
-  var w=window.open(url,'_blank'); if(!w) location.href=url;
-  showDone('<b>Almost done.</b> WhatsApp should open with your full order ready in the chat with Mon Jai. <b>Press Send</b> to place it. If WhatsApp did not open, <a href="'+url+'" target="_blank" rel="noopener">tap here</a>.');
+  openWaApp(s);
+  showDone('<b>Almost done.</b> WhatsApp should open with your full order ready in the chat with Mon Jai. <b>Press Send</b> to place it.'+waBtns(s));
 }
 function whenFB(cb){if(window.MJFB) cb(); else window.addEventListener('mjfb',cb,{once:true})}
 var lastOrderAt=0, myList=[];
 function stg(o){
   var d=o.type==='delivery';
   if(o.cancelled) return o.rejected?['Not accepted','bad']:['Cancelled','bad'];
-  if(o.status==='done') return [d?'Delivered':'Handed over','ok'];
+  if(o.status==='done') return [(d?'Delivered':'Handed over')+' - order closed','ok'];
   if(o.status==='out') return [d?'Out for delivery':'Ready for pickup','go'];
   if(o.status==='accepted') return ['Accepted - being prepared','go'];
   return ['Waiting for confirmation','wait'];
@@ -805,7 +811,7 @@ function stg(o){
 function isCur(o){return !o.cancelled&&o.status!=='done'}
 function orderCard(o){
   var t=stg(o), its=(o.items||[]).map(function(i){return i.qty+' x '+i.name+(i.size?' ('+i.size+')':'')}).join(', ');
-  return '<div class="mo"><div class="t1"><span>'+(o.billNo?esc(o.billNo)+' &middot; ':'')+esc(new Date(o.orderedAt).toLocaleString('en-IN',{day:'numeric',month:'short',hour:'numeric',minute:'2-digit',hour12:true}))+'</span><b>'+inr(o.total||0)+'</b></div><div class="t2">'+esc(its)+'</div><span class="st '+t[1]+'">'+esc(t[0])+'</span>'+(o.cancelled&&o.cancelReason?'<div class="t2">'+esc(o.cancelReason)+'</div>':'')+(o.status==='done'&&!o.cancelled&&isReg()?rateHtml(o):(o.status==='done'&&!o.cancelled?'<div class="rate"><span class="t2">Log in (top of page) to rate this order.</span></div>':''))+'</div>';
+  return '<div class="mo"><div class="t1"><span>'+(o.billNo?esc(o.billNo)+' &middot; ':'')+esc(new Date(o.orderedAt).toLocaleString('en-IN',{day:'numeric',month:'short',hour:'numeric',minute:'2-digit',hour12:true}))+'</span><b>'+inr(o.total||0)+'</b></div><div class="t2">'+esc(its)+'</div><span class="st '+t[1]+'">'+esc(t[0])+'</span>'+(!o.cancelled&&(o.status==='accepted'||o.status==='out')?'<div class="rate"><button type="button" class="btn sm" data-recv="'+esc(o.id)+'">I have received my order</button></div>':'')+(o.cancelled&&o.cancelReason?'<div class="t2">'+esc(o.cancelReason)+'</div>':'')+(o.status==='done'&&!o.cancelled&&isReg()?rateHtml(o):(o.status==='done'&&!o.cancelled?'<div class="rate"><span class="t2">Log in (top of page) to rate this order.</span></div>':''))+'</div>';
 }
 
 /* ---------- account area: profile, settings, activity ---------- */
@@ -915,8 +921,7 @@ function placeOrder(s){
   if(Date.now()-lastOrderAt<15000){say('Please wait a few seconds before sending another order.');return}
   if(!window.MJFB){sendText(s);return}
   btn.disabled=true; btn.textContent='Placing your order...';
-  var wa=null; if(!noWaOn()){try{wa=window.open('about:blank','_blank')}catch(e){}}
-  var fail=function(){btn.textContent='Place order';update();say('We could not reach our order system, so we are opening WhatsApp instead. Press Send there.');var u='https://wa.me/91'+PHONE+'?text='+encodeURIComponent(message(s)); if(wa&&!wa.closed){wa.location.href=u}else sendText(s)};
+    var fail=function(){btn.disabled=false;btn.textContent='Place order';update();say('We could not reach our order system, so we are opening WhatsApp instead. Press Send there.');sendText(s)};
   MJFB.uid().then(function(uid){
     var id=MJFB.newId(), d={id:id,uid:uid,source:'customer',status:'new',billNo:'',rev:1,revisions:[],payments:[],orderedAt:new Date().toISOString(),
       requestedFor:s.when&&!isNaN(new Date(s.when))?new Date(s.when).toISOString():'',name:s.name,phone:s.phone,email:s.email,address:s.address,type:s.del?'delivery':'pickup',
@@ -927,9 +932,8 @@ function placeOrder(s){
     lastOrderAt=Date.now(); try{if(me) MJFB.saveProfile(me.uid,{anon:me.anon,name:s.name,email:s.email||me.email||'',phone:s.phone,address:s.address,provider:me.provider}).catch(function(){})}catch(e){}
     var url='https://wa.me/91'+PHONE+'?text='+encodeURIComponent(message(s));
     Object.keys(qty).forEach(function(k){setQty(k,0)}); btn.textContent='Place order'; update();
-    var opened=false; if(wa&&!wa.closed){try{wa.location.href=url;opened=true}catch(e){}}
-    var nwDone=noWaOn();
-    showDone(nwDone?'<b>Order placed!</b> Mon Jai has received it. Since your number is not on WhatsApp, we will <b>call you on '+esc(s.phone)+'</b> to confirm. You can also call us on 9036435865.<br><a class="btn pri big" style="display:block;text-align:center;text-decoration:none" href="tel:+919036435865">Call Mon Jai</a><div class="hint" style="margin-top:8px">Track it any time under <button type="button" class="link" data-go="orders">My orders</button>.</div>':'<b>Order placed!</b> Mon Jai has received it and will confirm shortly.<br>'+(opened?'WhatsApp has opened with your order. <b>Press Send there</b> so we can reply to you faster.':'<b>One more step:</b> tap the button to send the same order on WhatsApp.')+'<br><a class="btn pri big" style="display:block;text-align:center;text-decoration:none" href="'+url+'" target="_blank" rel="noopener">Send order on WhatsApp</a><div class="hint" style="margin-top:8px">Track it any time under <button type="button" class="link" data-go="orders">My orders</button>.</div>');
+    var nwDone=noWaOn(); if(!nwDone) openWaApp(s);
+    showDone(nwDone?'<b>Order placed!</b> Mon Jai has received it. Since your number is not on WhatsApp, we will <b>call you on '+esc(s.phone)+'</b> to confirm. You can also call us on 9036435865.<br><a class="btn pri big" style="display:block;text-align:center;text-decoration:none" href="tel:+919036435865">Call Mon Jai</a><div class="hint" style="margin-top:8px">Track it any time under <button type="button" class="link" data-go="orders">My orders</button>.</div>':'<b>Order placed!</b> Mon Jai has received it and will confirm shortly.<br>WhatsApp should open with your order. <b>Press Send there</b> so we can reply to you faster.'+waBtns(s)+'<div class="hint" style="margin-top:8px">Track it any time under <button type="button" class="link" data-go="orders">My orders</button>.</div>');
     $('myOrders').hidden=!myList.length&&!isReg();
   }).catch(fail);
 }
@@ -994,6 +998,12 @@ function go(t,keep){
 document.addEventListener('click',function(e){var b=e.target.closest('[data-go]'); if(b){e.preventDefault(); go(b.getAttribute('data-go'))}});
 window.addEventListener('hashchange',function(){go(location.hash.slice(1),true)});
 $('acctChip').addEventListener('click',function(){if(!isReg()){$('authBox').hidden=false;drawAcct()}});
+document.addEventListener('click',function(e){
+  var b=e.target.closest('[data-recv]'); if(!b) return; var id=b.getAttribute('data-recv');
+  if(!confirm('Confirm that you received this order? It will be marked delivered and closed.')) return;
+  b.disabled=true; b.textContent='Saving...';
+  MJFB.receive(id,new Date().toISOString()).catch(function(){b.disabled=false; b.textContent='Could not save. Try again'});
+});
 function refreshMenu(){
   indexMenu(); buildMenu();
   var old=qty; qty={}; Object.keys(old).forEach(function(id){if(BYID[id]&&!BYID[id].off){qty[id]=old[id]; setQty(id,old[id])}});
@@ -1064,7 +1074,7 @@ function buildReviews(real){
   var need=Math.max(0,5-cards.length), samp=need>0;
   for(var k=0;k<need;k++) cards.push({real:0,r:SAMPLES[k].r,t:SAMPLES[k].t});
   $('sampleNote').hidden=!samp;
-  $('rTrack').innerHTML=cards.map(function(c){return '<div class="rc"><div class="rs">'+star(c.r)+'</div><div class="rt1">&ldquo;'+esc(c.t)+'&rdquo;</div>'+(c.reply?'<div class="reply"><b>Mon Jai:</b> '+esc(c.reply)+'</div>':'')+'<div class="rw"><span>'+(c.real?esc(c.n):'Mon Jai customer')+'</span>'+(c.real?'':'<span class="smp"></span>')+'</div></div>'}).join('');
+  $('rTrack').innerHTML=cards.map(function(c){return '<div class="rc"><div class="rs">'+star(c.r)+'</div><div class="rt1">&ldquo;'+esc(c.t)+'&rdquo;</div>'+(c.reply?'<div class="reply"><b>Mon Jai:</b> '+esc(c.reply)+'</div>':'')+'<div class="rw"><span>'+(c.real?esc(c.n):'Mon Jai customer')+'</span>'+(c.real?'':'<span class="smp">Sample</span>')+'</div></div>'}).join('');
   rcS.n=cards.length; rcS.per=perView(); rcS.i=0; moveRev();
 }
 function moveRev(){
@@ -1149,7 +1159,7 @@ syncTog(); update();
 <script type="module">
 import {initializeApp} from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
 import {getAuth,onAuthStateChanged,signInAnonymously,createUserWithEmailAndPassword,signInWithEmailAndPassword,signInWithPopup,signInWithCredential,linkWithCredential,linkWithPopup,GoogleAuthProvider,EmailAuthProvider,sendPasswordResetEmail,signOut,updateProfile,updatePassword,reauthenticateWithCredential} from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
-import {getFirestore,collection,doc,setDoc,getDoc,query,where,orderBy,limit,onSnapshot,increment} from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+import {getFirestore,collection,doc,setDoc,getDoc,query,where,orderBy,limit,onSnapshot,increment,updateDoc} from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 const firebaseConfig={apiKey:"AIzaSyAf_y-afFfjnuxaGavsLVHfZPN5W2O_V_Q",authDomain:"monjai-d55ac.firebaseapp.com",projectId:"monjai-d55ac",storageBucket:"monjai-d55ac.firebasestorage.app",messagingSenderId:"585997388232",appId:"1:585997388232:web:e0eadea8c1947e26e158fd"};
 const app=initializeApp(firebaseConfig,'customer');
 const auth=getAuth(app);
@@ -1164,6 +1174,7 @@ window.MJFB={
   user:()=>info(auth.currentUser),
   onAuth:(cb)=>{subs.push(cb); if(auth.currentUser) cb(info(auth.currentUser))},
   listenMenu:(cb,err)=>onSnapshot(doc(db,'meta','menu'),cb,err),
+  receive:(id,at)=>getDoc(doc(db,'orders',id)).then(s=>{const o=s.data()||{}; const m=Math.max(0,Math.round((new Date(at)-new Date(o.orderedAt))/60000)); return updateDoc(doc(db,'orders',id),{status:'done',deliveredAt:at,minutesToDeliver:m,confirmedByCustomer:true})}),
   newId:()=>doc(collection(db,'orders')).id,
   place:(id,data)=>setDoc(doc(db,'orders',id),data),
   mine:(uid,cb,err)=>onSnapshot(query(collection(db,'orders'),where('uid','==',uid)),s=>cb(s.docs.map(d=>d.data())),err),
