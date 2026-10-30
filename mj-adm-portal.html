@@ -878,7 +878,15 @@ function doMail(s,blob){
 }
 function send(channel,btn){
   var o=ensureSaved(); if(!o) return;
-  var s=snap(); btn.disabled=true; setMsg('Preparing the PDF...');
+  var s=snap();
+  if(!IS_MOBILE&&(channel==='wa'||channel==='both')&&canWa(s)){
+    /* computer: no PDF, just open WhatsApp Web with the bill text */
+    openWa(waLink(s)); var a=$('btnChat'); a.href=waLink(s); a.target='wa_web'; a.hidden=false;
+    setMsg('WhatsApp Web is opening with the bill text for '+s.phone+'. Press Send there. If WhatsApp says the number is invalid, this customer is not on WhatsApp: call or email instead.');
+    if(channel==='both'&&canMail(s)){btn.disabled=true; return makePdf(s).then(function(blob){return doMail(s,blob)}).catch(function(){setMsg('Could not create the PDF for the email.')}).then(function(){update()})}
+    return;
+  }
+  btn.disabled=true; setMsg('Preparing the PDF...');
   makePdf(s).then(function(blob){return channel==='mail'?doMail(s,blob):doWa(s,blob,channel==='both')})
   .catch(function(){setMsg('Could not create the PDF. Try “Save bill as image” instead.')})
   .then(function(){update()});
