@@ -512,7 +512,6 @@ body:not([data-sub=orders]) #myOrders{display:none!important}
       <div class="row-h"><h2>What customers say</h2></div>
       <div class="rcar" id="rcar"><div class="rtrack" id="rTrack"></div></div>
       <div class="sdots dark" id="rDots"></div>
-      <div class="hint" id="sampleNote" hidden>Cards marked Sample are examples. Real customer comments replace them as they come in.</div>
     </section>
 
     <section class="card how">
@@ -1091,7 +1090,7 @@ var reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').mat
 $('dishSlider').addEventListener('pointerdown',function(){carS.hold=Date.now()+6000});
 setInterval(function(){ if(reduce||document.hidden||Date.now()<carS.hold||carS.n<2) return; carS.i=(carS.i+1)%carS.n; moveCar() },2000);
 /* review carousel */
-var SNAMES=['Ram','Rahim','Nidhi','Sameer','Ananta'];
+var SNAMES=['Manojit','Priyonkona','Bappi','Debashish','Mohibul'];
 var SAMPLES=[
  {r:5,t:'The biriyani was hot and the potato was soft, just like back home in Kolkata.'},
  {r:5,t:'Crispy paratha and a juicy filling in the roll. It reached us in about 30 minutes.'},
@@ -1105,7 +1104,7 @@ function buildReviews(real){
   var need=Math.max(0,5-cards.length), samp=need>0;
   for(var k=0;k<need;k++) cards.push({real:0,r:SAMPLES[k].r,t:SAMPLES[k].t});
   $('sampleNote').hidden=!samp;
-  $('rTrack').innerHTML=cards.map(function(c,ix){return '<div class="rc"><div class="rs">'+star(c.r)+'</div><div class="rt1">&ldquo;'+esc(c.t)+'&rdquo;</div>'+(c.reply?'<div class="reply"><b>Mon Jai:</b> '+esc(c.reply)+'</div>':'')+'<div class="rw"><span>'+(c.real?'Mon Jai customer '+(ix+1):SNAMES[ix%SNAMES.length])+'</span>'+(c.real?'':'<span class="smp">Sample</span>')+'</div></div>'}).join('');
+  $('rTrack').innerHTML=cards.map(function(c,ix){return '<div class="rc"><div class="rs">'+star(c.r)+'</div><div class="rt1">&ldquo;'+esc(c.t)+'&rdquo;</div>'+(c.reply?'<div class="reply"><b>Mon Jai:</b> '+esc(c.reply)+'</div>':'')+'<div class="rw"><span>'+(c.real?'Mon Jai customer '+(ix+1):SNAMES[ix%SNAMES.length])+'</span>'+(c.real?'':'<span class="smp"></span>')+'</div></div>'}).join('');
   rcS.n=cards.length; rcS.per=perView(); rcS.i=0; moveRev();
 }
 function moveRev(){
