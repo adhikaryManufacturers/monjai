@@ -255,6 +255,16 @@ body.locked main,body.locked .notify{display:none!important}
 .mtab td .btn{padding:7px 12px}.mtab tr:not(.ed) td{padding:9px 8px;border-bottom:1px solid var(--line)}.mtab tr.ed{background:#f6faf2}
 .so2{background:#fde8e4;color:#9e2a14;border-radius:999px;padding:2px 9px;font-size:12px;font-weight:600}
 
+/* cool pager */
+.pager{background:linear-gradient(180deg,#fff,#f6f9f4);border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin-top:16px;border-top:1px solid var(--line)}
+.pager .pn{display:flex;flex-wrap:wrap;gap:6px;align-items:center;justify-content:center}
+.pager .pn button{min-width:36px;height:36px;padding:0 12px;border-radius:999px;border:1px solid var(--line);background:#fff;color:var(--fg);font-weight:600;transition:all .15s}
+.pager .pn button:hover:not(:disabled):not(.on){border-color:var(--accent);color:var(--accent);transform:translateY(-1px);box-shadow:0 2px 6px rgba(11,61,30,.12)}
+.pager .pn button.on{background:var(--accent);border-color:var(--accent);color:#fff;box-shadow:0 3px 8px rgba(11,61,30,.28)}
+.pager .pe{padding:0 4px;color:var(--muted)}.pager .pi b{color:var(--fg)}
+.ord{transition:box-shadow .15s,transform .15s}.ord:hover{background:#f7faf5}
+@media(max-width:600px){.pager{justify-content:center}.pager .pi{width:100%;text-align:center}.pager .ps{width:100%;justify-content:center}}
+
 .row-h{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px}.row-h h2{margin:0}
 .late{margin-top:12px;padding:10px 12px;border-radius:6px;background:#fff4d6;color:#5b4400;font-size:13.5px}
 .sumbox table td.n{text-align:right;white-space:nowrap}.sumbox tr.g td{font-weight:700;font-size:16px;border-top:1px solid var(--line)}
@@ -441,6 +451,16 @@ body:not([data-sub=orders]) #myOrders{display:none!important}
 .nwabox .btn{display:inline-flex;margin-top:8px;text-decoration:none;color:#fff}
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .nwabox{background:#3a3000;color:#ffe9a6}}
 .row.off{opacity:.6}.row.off .price{text-decoration:line-through}.row .so{font-size:12px;font-weight:700;color:#9e2a14;background:#fde8e4;border-radius:999px;padding:4px 10px;white-space:nowrap}
+
+.bulk{display:flex;gap:14px;align-items:flex-start;background:linear-gradient(135deg,#0f5a2e,#0b3d1e);color:#fff;border:2px solid #f7c600}
+.bulk-ic{font-size:34px;line-height:1}
+.bulk h2{color:#f7c600;margin:0 0 4px}
+.bulk p{margin:0;font-size:14.5px;line-height:1.55;color:#fff}.bulk p b{color:#f7c600}
+.bulk-b{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.bulk-b .btn{display:inline-flex;text-decoration:none;font-size:14px;padding:8px 14px}
+.bulk-b .btn.pri{background:#f7c600;color:#0b3d1e;border-color:#f7c600}
+.bulk-b .btn.ghost{color:#fff;border-color:#ffffffaa;background:transparent}
+@media(max-width:430px){.bulk{flex-direction:column;gap:6px}}
 </style></head><body>
 <header class="top">
   <div class="topin">
@@ -468,6 +488,14 @@ body:not([data-sub=orders]) #myOrders{display:none!important}
       <div><b>Order by 9 PM</b><span>Ready in about 30 minutes</span></div>
       <div><b>Free delivery</b><span id="feeFact">On bigger orders</span></div>
       <div><b>Pay when it arrives</b><span>Cash or UPI</span></div>
+    </section>
+
+    <section class="card bulk" id="bulkCard">
+      <div class="bulk-ic" aria-hidden="true">&#127881;</div>
+      <div class="bulk-t"><h2>Bulk orders welcome</h2>
+        <p>We also take bulk orders for party, office meetings, get together and other functions. Contact on WhatsApp or call directly on <b>9036435865</b> for discount and benefits.</p>
+        <div class="bulk-b"><a class="btn pri" href="https://wa.me/919036435865?text=Hi%20Mon%20Jai%2C%20I%20want%20to%20enquire%20about%20a%20bulk%20order." target="_blank" rel="noopener">WhatsApp us</a><a class="btn ghost" href="tel:+919036435865">Call 9036435865</a></div>
+      </div>
     </section>
 
     <section class="card" id="ratingsCard">
@@ -782,7 +810,7 @@ function update(){
   var h='';
   if(!s.count) h='<div class="empty">Your order is empty. Choose items above.</div>';
   else{h='<table><tbody>';s.items.forEach(function(i){h+='<tr><td>'+i.qty+' x '+esc(i.name)+(i.size?'<small>'+esc(i.size)+'</small>':'')+'</td><td class="n">'+inr(i.amount)+'</td></tr>'});
-    h+='<tr><td>Subtotal</td><td class="n">'+inr(s.sub)+'</td></tr><tr><td>'+(s.del?'Delivery':'Pickup')+'</td><td class="n">'+(s.del?(s.dc?inr(s.dc):'FREE'):'-')+'</td></tr><tr class="g"><td>Total</td><td class="n">'+inr(s.total)+'</td></tr></tbody></table>'}
+    h+='<tr><td>Subtotal</td><td class="n">'+inr(s.sub)+'</td></tr><tr><td>'+(s.del?'Delivery':'Pickup')+'</td><td class="n">'+(s.del?(s.dc?inr(s.dc):'FREE'):'-')+'</td></tr><tr class="g"><td>Total</td><td class="n">'+inr(s.total)+'</td></tr></tbody></table>'+(s.phone.length===10?'<div class="hint" style="margin-top:8px">We will contact you on <b>'+esc(s.phone)+'</b>. Wrong number? Change it above.</div>':'')}
   $('sumBox').innerHTML=h;
   MENU.forEach(function(c,ci){var n=0;c.items.forEach(function(i){n+=qty[i[0]]||0});var bg=$('badge-'+ci); if(bg) bg.textContent=n?n+' added':''});
   $('btnSend').disabled=!s.count; $('btnCopy').disabled=!s.count;
@@ -929,7 +957,7 @@ function placeOrder(s){
       subtotal:s.sub,deliveryCharge:s.dc,discount:0,discType:'amt',discValue:0,total:s.total};
     return MJFB.place(id,d);
   }).then(function(){
-    lastOrderAt=Date.now(); try{if(me) MJFB.saveProfile(me.uid,{anon:me.anon,name:s.name,email:s.email||me.email||'',phone:s.phone,address:s.address,provider:me.provider}).catch(function(){})}catch(e){}
+    lastOrderAt=Date.now(); try{if(me) MJFB.saveProfile(me.uid,{anon:me.anon,name:s.name,email:s.email||me.email||'',phone:(profile&&profile.phone)?profile.phone:s.phone,address:s.address,provider:me.provider}).catch(function(){})}catch(e){}
     var url='https://wa.me/91'+PHONE+'?text='+encodeURIComponent(message(s));
     Object.keys(qty).forEach(function(k){setQty(k,0)}); btn.textContent='Place order'; update();
     var nwDone=noWaOn(); if(!nwDone) openWaApp(s);
@@ -968,9 +996,11 @@ $('aGo').addEventListener('click',function(){
 });
 $('aGoogle').addEventListener('click',function(){setAuthMsg('');MJFB.google().catch(function(e){setAuthMsg(authErr(e))})});
 $('aForgot').addEventListener('click',function(){var em=$('aEmail').value.trim(); if(!em){setAuthMsg('Type your email above first.');return} MJFB.reset(em).then(function(){setAuthMsg('Password reset link sent to '+em+'. Check your inbox and spam.')}).catch(function(e){setAuthMsg(authErr(e))})});
+var edited={};
+['cName','cPhone','cEmail','cAddr'].forEach(function(id){$(id).addEventListener('input',function(){edited[id]=true})});
 function fillFromProfile(p){
   profile=p||null;
-  function put(id,v){if(v) $(id).value=v}
+  function put(id,v){if(v&&!edited[id]) $(id).value=v}
   var lastO=myList.filter(function(o){return o.phone})[0]||{};
   put('cName',p&&p.name||me.name||lastO.name); put('cPhone',p&&p.phone||lastO.phone); put('cEmail',p&&p.email||me.email); put('cAddr',p&&p.address||lastO.address);
   drawAcct(); applyPref(); update(); lastSig=''; renderMine(ordersRaw); if(subTab==='profile') fillProfileForm();
